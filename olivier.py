@@ -22,10 +22,18 @@ def check_f1(X, f1):
 def check_f2(X, f2):
     duplicates = [k for k, g in itertools.groupby(X) if len(list(g)) > 1]
 
-    print("hello: ",duplicates)
-
     for i in range(len(duplicates)):
+        if ((duplicates[i] < duplicates[i+2] < duplicates[i+4]) 
+                and (duplicates[i+1] < duplicates[i+3])):
+                    f2.append(1)
         
+        elif ((duplicates[i] > duplicates[i+2] > duplicates[i+4]) 
+                and (duplicates[i+1] > duplicates[i+3])):
+                    f2.append(-1)
+        
+        else: f2.append(0)
+    
+    print(f2)    
     
 ########################### FUNCTION TO CHECK F3 ##############################
 #def check_f3(X, f3):
