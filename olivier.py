@@ -72,20 +72,57 @@ def vwap_ask(list_of_chunk, output_ask):
     output_ask.append(result2)
 
 ##################################### VWAP_ask_zigzag Calculation
-def vwap_bid_zigzag(output_bid, output_bid_zigzag, changes):
+def vwap_bid_zigzag(output_bid, output_bid_zigzag, 
+                        boundaries, tradeprice_dates, orderbook_dates):
 
-    for i in range(len(output_bid)):
-        numerator = float(output_bid[i])
-        print(numerator)
-        denominator = float(changes[i])
-        print(denominator)
-        result3 = numerator/denominator
-        print(result3)
+    counter = 0
+    numerator = 0
+    denominator = []
+    
+    for a, b in boundaries:
+        denominator.append(b-a)
+    
+    for n in range(len(boundaries)):
+        tuple = boundaries[n]
+        index_i = int(tuple[0])
+        index_j = int(tuple[1])
+                
+        while tradeprice_dates[index_i] <= int(orderbook_dates[counter]) and tradeprice_dates[index_j] >= int(orderbook_dates[counter]): 
+            print("lol",counter)
+            numerator += output_bid[counter]
+            counter += 1
+        
+        while ((tradeprice_dates[index_i] > int(orderbook_dates[counter]))):
+            counter += 1
+            
+       
+    #print(output_bid_zigzag)
+    #for i in range(len(output_bid)):
+     #   numerator = float(output_bid[i])
+      #  print(numerator)
+       # denominator = float(changes[i])
+       # print(denominator)
+       # result3 = numerator/denominator
+       # print(result3)
         #output_bid_zigzag += result
     #print(output_bid_zigzag)
 
 ###############################################################################
 ########################### FUNCTION TO CHECK F1 ##############################
+def gothrough(left, X, index):
+    i = 1
+    #output=0
+    if (left):
+        while (X[index-i] == X[index]):
+            i+=1
+        return index-i+1
+    
+    else: 
+        while ((index+i)<len(X)) and (X[index+i] == X[index]): 
+            i+=1
+        return index+i-1
+
+
 def check_f1(X, changes, f1, listnew, boundaries):
     
     #duplicates = [k for k, g in itertools.groupby(X) if len(list(g)) > 1]
@@ -109,7 +146,10 @@ def check_f1(X, changes, f1, listnew, boundaries):
             result = X[currenT]-X[preV]
             changes.append(result)
             maxima.append(X[currenT])
-            boundaries.append(index_maxima)
+            first = gothrough(True, X, preV)
+            second = gothrough(False, X, currenT)
+            couple = (first, second)
+            boundaries.append(couple)
         
         else: 
             nexT = currenT+1
@@ -120,7 +160,10 @@ def check_f1(X, changes, f1, listnew, boundaries):
                 result = X[currenT] - X[preV]
                 changes.append(result)
                 maxima.append(X[preV])
-                boundaries.append(index_maxima)
+                first = gothrough(True, X, preV)
+                second = gothrough(False, X, currenT)
+                couple = (first, second)
+                boundaries.append(couple)
                 preV = currenT
     
     for i in range(len(changes)):
@@ -132,7 +175,7 @@ def check_f1(X, changes, f1, listnew, boundaries):
     
     #print(f1)
     #print(len(f1))
-    print(boundaries)
+    #print(boundaries)
 
 ###############################################################################
 ########################### FUNCTION TO CHECK F2 ##############################
@@ -193,7 +236,7 @@ def check_f2(X, f2, maxima):
 ###############################################################################
 ########################### FUNCTION TO CHECK F3 ##############################
 
-def check_f3(f3, changes):
+def check_f3(f3, boundaries, tradeprice_dates, orderbook_dates):
 
     with open('/Users/KHATIBUSINESS/bitcoin/test2.txt','r') as f:
         list_of_chunks = []
@@ -208,7 +251,9 @@ def check_f3(f3, changes):
         for list_of_chunk in list_of_chunks:    
             vwap_bid(list_of_chunk, output_bid)  
             vwap_ask(list_of_chunk, output_ask)
-            vwap_bid_zigzag(output_bid, output_bid_zigzag, changes)
+        
+        vwap_bid_zigzag(output_bid, output_bid_zigzag, 
+                                boundaries, tradeprice_dates, orderbook_dates)
 
     f.close()
 
@@ -228,17 +273,17 @@ for i in range(len(tradeprice)):
 
 ######### EXTRACT THE TRADE PRICE DATES        
 with open(filename2) as f:
-    tradeprice_date = f.read().splitlines()
+    tradeprice_dates = f.read().splitlines()
         
-for i in range(len(tradeprice_date)):
-    tradeprice_date[i] = float(tradeprice_date[i])
+for i in range(len(tradeprice_dates)):
+    tradeprice_dates[i] = int(tradeprice_dates[i])
     
 ######### EXTRACT THE ORDER BOOK DATES        
 with open(filename3) as f:
     orderbook_dates = f.read().splitlines()
         
 for i in range(len(tradeprice)):
-    orderbook_dates[i] = float(orderbook_dates[i])
+    orderbook_dates[i] = int(orderbook_dates[i])
 
 ###################################### EXTRACT THE F1    
 f1 = []
@@ -256,5 +301,5 @@ check_f2(tradeprice, f2, maxima)
 ###################################### EXTRACT THE F3    
 f3 = []
 
-check_f3(f3, changes)
+check_f3(f3, boundaries, tradeprice_dates, orderbook_dates)
 
