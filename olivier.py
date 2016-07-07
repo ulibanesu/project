@@ -35,6 +35,15 @@ def grouper(iterable, n, fillvalue=None):
     # grouper('ABCDEFG', 3, 'x') --> ABC DEF Gxx"
     args = [iter(iterable)] * n
     return zip_longest(*args, fillvalue=fillvalue)
+    
+
+##################################### FUNCTION TO GET THE SIGN OF A NUMBER
+def sign(number):
+    """Will return 1 for positive,
+    -1 for negative, and 0 for 0"""
+    try:return number/abs(number)
+    except ZeroDivisionError:return 0
+
 
 #################################### VWAP_bid Calculation    
 def vwap_bid(list_of_chunk, output_bid):
@@ -189,9 +198,78 @@ def vwap_spread(output_bid_zigzag, output_ask_zigzag):
         result.append(out)
     return result
 
+
+##################################### CALCULATE THETA
+def theta(phi, VWAP_Spread):
+    
+    features = []
+    
+    ###### Choice of alpha: (chose alpha=0.2) ######
+    alpha = 0.20
+    
+    for i in range(len(phi)):
+        first = abs((phi[i]/VWAP_Spread[i])/(phi[i-1]/VWAP_Spread[i-1]))
+        if (first-1>alpha):
+            first_out = 1
+        
+        elif (1-first>alpha):
+            first_out = -1
+            
+        else:
+            first_out = 0
+        
+        second = abs((phi[i]/VWAP_Spread[i])/(phi[i-2]/VWAP_Spread[i-2]))
+        if (second-1>alpha):
+            second_out = 1
+        
+        elif (1-second>alpha):
+            second_out = -1
+            
+        else:
+            second_out = 0
+            
+        third = abs((phi[i-1]/VWAP_Spread[i-1])/(phi[i-2]/VWAP_Spread[i-2]))
+        if (third-1>alpha):
+            third_out = 1
+        
+        elif (1-third>alpha):
+            third_out = -1
+            
+        else:
+            third_out = 0
+  
+        out = (first_out, second_out, third_out)
+        features.append(out)
+        
+    return features
+    
+    
+######################### FINAL FUNCTION TO GET THE F3 FEATURE
+def final_output_f3(theta_output, phi, f3):
+
+    for i in range(len(theta_output)):
+        tuple = theta_output[i]
+        first = tuple[0]
+        second = tuple[1]
+        third = tuple[2]
+        
+        if (first == 1 and second > -1 and third < 1 and (sign(phi[i]) == sign(phi[i-1]) or sign(phi[i]) == sign(phi[i-2]))):
+            f3.append(1)
+
+        elif (first == -1 and second < 1 and third > -1 and (sign(phi[i]) != sign(phi[i-1]) or sign(phi[i]) != sign(phi[i-2]))):
+            f3.append(-1)
+        
+        else:
+            f3.append(0)
+    
+    #print(f3)
+    #print(len(f3))
+
 ###############################################################################
 ###############################################################################
 ########################### FUNCTION TO CHECK F1 ##############################
+
+# Helper function to go through parts
 def gothrough(left, X, index):
     i = 1
     #output=0
@@ -358,14 +436,24 @@ def check_f3(f3, boundaries, tradeprice_dates, orderbook_dates):
 
     ############ CALCULATE VWAP_Spread
     VWAP_Spread = vwap_spread(output_bid_zigzag, output_ask_zigzag)
-    print(VWAP_Spread)
 
+    ############ CALCULATE THETA
+    theta_output = theta(phi, VWAP_Spread)
+    
+    ############ FINAL OUTPUT TO GET THE F3 FEATURE
+    final_output_f3(theta_output, phi, f3)
 
 ###############################################################################
 ########################### EXTRACT FROM THE DATA #############################
 ###############################################################################
+
+######## file containing the trade prices
 filename1 = '/Users/KHATIBUSINESS/bitcoin/btceur_trade.txt'
+
+######## file containing the trade prices dates
 filename2 = '/Users/KHATIBUSINESS/bitcoin/btceur_date.txt'
+
+####### file containing the order book dates
 filename3 = '/Users/KHATIBUSINESS/bitcoin/btceur_orderbook_date.txt'
 
 ######### EXTRACT THE TRADE PRICE        
@@ -406,4 +494,30 @@ check_f2(tradeprice, f2, maxima)
 f3 = []
 
 check_f3(f3, boundaries, tradeprice_dates, orderbook_dates)
+
+####################### MAKE THE FEATURE VECTOR ###############################
+feature_vector = []
+
+for i in range(len(f1)):
+    first = f1[i]
+    second = f2[i]
+    third = f3[i]
+    each_feature = (first, second, third)
+    feature_vector.append(each_feature)
+
+counter = 0
+n = len(feature_vector)
+s = 'feature_vector.txt'
+
+with open(s,'w') as f:
+    while (counter<n):
+        f.write(str(feature_vector[counter])+'\n')
+        counter += 1
+#print(feature_vector)
+
+
+
+
+
+
 
