@@ -1,5 +1,6 @@
 from itertools import zip_longest
 from itertools import groupby
+import numpy as np
 
 ################################### GET A SPECIFIC WORD IN THE LINE
 def my_txt(text, target):
@@ -52,6 +53,7 @@ def vwap_bid(list_of_chunk, output_bid):
             
     result1 = numerator/denominator
     output_bid.append(result1)
+    #print(output_bid)
 
 #################################### VWAP_ask Calculation    
 def vwap_ask(list_of_chunk, output_ask):
@@ -71,42 +73,123 @@ def vwap_ask(list_of_chunk, output_ask):
     result2 = numerator/denominator
     output_ask.append(result2)
 
-##################################### VWAP_ask_zigzag Calculation
+##################################### VWAP_bid_zigzag Calculation
 def vwap_bid_zigzag(output_bid, output_bid_zigzag, 
                         boundaries, tradeprice_dates, orderbook_dates):
 
-    counter = 0
-    numerator = 0
-    denominator = []
-    
-    for a, b in boundaries:
-        denominator.append(b-a)
+    # To be put when extracted
+    output_bid = np.array(output_bid, dtype=float)
+    output_bid_zigzag = np.array(output_bid_zigzag, dtype=float) 
+    tradeprice_dates  = np.array(tradeprice_dates, dtype=int)
+    orderbook_dates = np.array(orderbook_dates, dtype=int)
+
+
+    numerator = np.zeros(len(boundaries))
+    denominator = np.zeros(len(boundaries))
+    last_time = orderbook_dates[len(orderbook_dates)-1]
+
     
     for n in range(len(boundaries)):
-        tuple = boundaries[n]
-        index_i = int(tuple[0])
-        index_j = int(tuple[1])
-                
-        while tradeprice_dates[index_i] <= int(orderbook_dates[counter]) and tradeprice_dates[index_j] >= int(orderbook_dates[counter]): 
-            print("lol",counter)
-            numerator += output_bid[counter]
-            counter += 1
         
-        while ((tradeprice_dates[index_i] > int(orderbook_dates[counter]))):
-            counter += 1
-            
-       
-    #print(output_bid_zigzag)
-    #for i in range(len(output_bid)):
-     #   numerator = float(output_bid[i])
-      #  print(numerator)
-       # denominator = float(changes[i])
-       # print(denominator)
-       # result3 = numerator/denominator
-       # print(result3)
-        #output_bid_zigzag += result
-    #print(output_bid_zigzag)
+        # New version
+        tuple = boundaries[n]
+        time_trade_i = tradeprice_dates[int(tuple[0])]
+        time_trade_j = tradeprice_dates[int(tuple[1])]
 
+        if (time_trade_i > last_time):
+            numerator[n] = 0
+            denominator[n] = 0
+            
+        else:
+            maskTmp = np.logical_and(orderbook_dates >= time_trade_i, orderbook_dates <= time_trade_j) 
+            denominator[n] = sum(maskTmp)
+            numerator[n] = sum(output_bid[maskTmp])
+        
+        result = numerator/denominator
+
+    return result.tolist()
+    #print(output_bid_zigzag)
+    #print(result)
+    #print(len(result))
+
+##################################### VWAP_ask_zigzag Calculation
+def vwap_ask_zigzag(output_ask, output_ask_zigzag, 
+                        boundaries, tradeprice_dates, orderbook_dates):
+
+    # To be put when extracted
+    output_ask = np.array(output_ask, dtype=float)
+    output_ask_zigzag = np.array(output_ask_zigzag, dtype=float) 
+    tradeprice_dates  = np.array(tradeprice_dates, dtype=int)
+    orderbook_dates = np.array(orderbook_dates, dtype=int)
+
+
+    numerator = np.zeros(len(boundaries))
+    denominator = np.zeros(len(boundaries))
+    last_time = orderbook_dates[len(orderbook_dates)-1]
+
+    
+    for n in range(len(boundaries)):
+        
+        # New version
+        #print(n)
+        tuple = boundaries[n]
+        time_trade_i = tradeprice_dates[int(tuple[0])]
+        time_trade_j = tradeprice_dates[int(tuple[1])]
+
+        if (time_trade_i > last_time):
+            numerator[n] = 0
+            denominator[n] = 0
+            
+        else:
+            maskTmp = np.logical_and(orderbook_dates >= time_trade_i, orderbook_dates <= time_trade_j) 
+            denominator[n] = sum(maskTmp)
+            numerator[n] = sum(output_ask[maskTmp])
+        
+        result = numerator/denominator
+
+    return result.tolist()
+
+
+##################################### VWAP_bid_spread Calculation
+def vwap_bid_spread(output_bid_zigzag, maxima, output_bid_spread):
+    result = []    
+    
+    for i in range(len(maxima)):
+        out = maxima[i]-output_bid_zigzag[i]
+        result.append(out)
+    return result
+    
+
+##################################### VWAP_bid_spread Calculation
+def vwap_ask_spread(output_ask_zigzag, maxima, output_ask_spread):
+    result = []    
+    
+    for i in range(len(maxima)):
+        out = output_ask_zigzag[i]-maxima[i]
+        result.append(out)
+    return result
+
+
+##################################### CALCULATE PHI
+def phi_comp(output_bid_spread, output_ask_spread):
+    result = []
+    
+    for i in range(len(output_bid_spread)):
+        out = output_bid_spread[i]-output_ask_spread[i]
+        result.append(out)
+    return result
+
+
+##################################### CALCULATE VWAP_Spread
+def vwap_spread(output_bid_zigzag, output_ask_zigzag):
+    result = []
+
+    for i in range(len(output_bid_zigzag)):
+        out = output_ask_zigzag[i]-output_bid_zigzag[i]
+        result.append(out)
+    return result
+
+###############################################################################
 ###############################################################################
 ########################### FUNCTION TO CHECK F1 ##############################
 def gothrough(left, X, index):
@@ -178,6 +261,7 @@ def check_f1(X, changes, f1, listnew, boundaries):
     #print(boundaries)
 
 ###############################################################################
+###############################################################################
 ########################### FUNCTION TO CHECK F2 ##############################
 def check_f2(X, f2, maxima):
 
@@ -234,6 +318,7 @@ def check_f2(X, f2, maxima):
     #print(len(f2))    
 
 ###############################################################################
+###############################################################################
 ########################### FUNCTION TO CHECK F3 ##############################
 
 def check_f3(f3, boundaries, tradeprice_dates, orderbook_dates):
@@ -243,6 +328,9 @@ def check_f3(f3, boundaries, tradeprice_dates, orderbook_dates):
         output_bid = []
         output_ask = []
         output_bid_zigzag = []
+        output_ask_zigzag = []
+        output_bid_spread = []
+        output_ask_spread = []
 
         for i, group_of_15 in groupby(enumerate(nonblank_lines(f)), key=lambda x: x[0]//15):
             chunk = list(map(lambda x: x[1], group_of_15))
@@ -252,10 +340,26 @@ def check_f3(f3, boundaries, tradeprice_dates, orderbook_dates):
             vwap_bid(list_of_chunk, output_bid)  
             vwap_ask(list_of_chunk, output_ask)
         
-        vwap_bid_zigzag(output_bid, output_bid_zigzag, 
+    f.close()
+
+    
+    ############ RETRIEVE output_bid_zigzag and output_ask_zigzag    
+    output_bid_zigzag = vwap_bid_zigzag(output_bid, output_bid_zigzag, 
+                                boundaries, tradeprice_dates, orderbook_dates)
+    output_ask_zigzag = vwap_ask_zigzag(output_ask, output_ask_zigzag, 
                                 boundaries, tradeprice_dates, orderbook_dates)
 
-    f.close()
+    ############ RETRIEVE output_bid_spread and output_ask_spread
+    output_bid_spread = vwap_bid_spread(output_bid_zigzag, maxima, output_bid_spread)
+    output_ask_spread = vwap_ask_spread(output_ask_zigzag, maxima, output_ask_spread)
+
+    ############ CALCULATE PHI
+    phi = phi_comp(output_bid_spread, output_ask_spread)
+
+    ############ CALCULATE VWAP_Spread
+    VWAP_Spread = vwap_spread(output_bid_zigzag, output_ask_zigzag)
+    print(VWAP_Spread)
+
 
 ###############################################################################
 ########################### EXTRACT FROM THE DATA #############################
