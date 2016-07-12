@@ -1,6 +1,9 @@
+from __future__ import print_function
+
 from itertools import zip_longest
 from itertools import groupby
 import numpy as np
+import matplotlib.pyplot as plt
 
 ################################### GET A SPECIFIC WORD IN THE LINE
 def my_txt(text, target):
@@ -513,11 +516,496 @@ with open(s,'w') as f:
     while (counter<n):
         f.write(str(feature_vector[counter])+'\n')
         counter += 1
-#print(feature_vector)
 
 
+############## FOR TEST PURPOSES
+U1=0 
+U2=0 
+U3=0 
+U4=0 
+U5=0 
+U6=0 
+U7=0 
+U8=0 
+U9=0
+
+D1=0        
+D2=0
+D3=0
+D4=0
+D5=0
+D6=0
+D7=0
+D8=0
+D9=0
+
+for i in range(len(feature_vector)):
+    
+    ######### UP LEGS
+    if (feature_vector[i] == (1,1,1)):
+        U1+=1
+
+    if (feature_vector[i] == (1,-1,1)):
+        U2+=1
+
+    if (feature_vector[i] == (1,1,0)):
+        U3+=1
+
+    if (feature_vector[i] == (1,0,1)):
+        U4+=1
+
+    if (feature_vector[i] == (1,0,0)):
+        U5+=1
+
+    if (feature_vector[i] == (1,0,-1)):
+        U6+=1
+
+    if (feature_vector[i] == (1,-1,0)):
+        U7+=1
+
+    if (feature_vector[i] == (1,1,-1)):
+        U8+=1
+
+    if (feature_vector[i] == (1,-1,-1)):
+        U9+=1
+
+    ######### DOWN LEGS
+    if (feature_vector[i] == (-1,1,-1)):
+        D1+=1
+
+    if (feature_vector[i] == (-1,-1,-1)):
+        D2+=1
+
+    if (feature_vector[i] == (-1,1,0)):
+        D3+=1
+
+    if (feature_vector[i] == (-1,0,-1)):
+        D4+=1
+
+    if (feature_vector[i] == (-1,0,0)):
+        D5+=1
+
+    if (feature_vector[i] == (-1,0,1)):
+        D6+=1
+
+    if (feature_vector[i] == (-1,-1,0)):
+        D7+=1
+
+    if (feature_vector[i] == (-1,1,1)):
+        D8+=1
+
+    if (feature_vector[i] == (-1,-1,1)):
+        D9+=1
+        
+        
+print("U Trends:", U1,U2,U3,U4,U5,U6,U7,U8,U9)
+print("D Trends:", D1,D2,D3,D4,D5,D6,D7,D8,D9)
+
+distribution_zigzag_up = []
+distribution_zigzag_up.append(U1) 
+distribution_zigzag_up.append(U2)
+distribution_zigzag_up.append(U3) 
+distribution_zigzag_up.append(U4) 
+distribution_zigzag_up.append(U5) 
+distribution_zigzag_up.append(U6) 
+distribution_zigzag_up.append(U7) 
+distribution_zigzag_up.append(U8) 
+distribution_zigzag_up.append(U9) 
+
+distribution_zigzag_down = []
+distribution_zigzag_down.append(D1) 
+distribution_zigzag_down.append(D2)
+distribution_zigzag_down.append(D3) 
+distribution_zigzag_down.append(D4) 
+distribution_zigzag_down.append(D5) 
+distribution_zigzag_down.append(D6) 
+distribution_zigzag_down.append(D7) 
+distribution_zigzag_down.append(D8) 
+distribution_zigzag_down.append(D9) 
+
+#################### PLOT THE DISTRIBUTION (UP)
+
+weights = distribution_zigzag_up/np.sum(distribution_zigzag_up)
+x=[0,1,2,3,4,5,6,7,8]
+labels=['U1','U2','U3','U4','U5','U6','U7','U8','U9']
+plt.bar(x, weights, align='center')
+plt.xticks(x, labels)
+plt.xlabel("Distribution of zigzags")
+plt.ylabel("Probability")
+
+plt.show()
+
+#################### PLOT THE DISTRIBUTION (DOWN)
+
+weights = distribution_zigzag_down/np.sum(distribution_zigzag_down)
+x=[0,1,2,3,4,5,6,7,8]
+labels=['D1','D2','D3','D4','D5','D6','D7','D8','D9']
+plt.bar(x, weights, align='center')
+plt.xticks(x, labels)
+plt.xlabel("Distribution of zigzags")
+plt.ylabel("Probability")
+
+plt.show()
 
 
+###############################################################################
+###############################################################################
+############### MACHINE LEARNING PART (HIDDEN MARKOV MODEL) ###################
+
+"""
+Hidden Markov Model applied to BTC
+--------------------------
+Olivier Khatib
+Imperial College London
+2016
+"""
+
+import numpy as np
+from matplotlib import cm, pyplot as plt
+from matplotlib.dates import YearLocator, MonthLocator
 
 
+from hmmlearn.hmm import GaussianHMM
 
+
+filename1 = '/Users/KHATIBUSINESS/bitcoin/btceur_trade.txt'
+
+filename2 = '/Users/KHATIBUSINESS/bitcoin/btceur_volume.txt'
+
+filename3 = '/Users/KHATIBUSINESS/bitcoin/btceur_date.txt'
+
+print(__doc__)
+
+###############################################################################
+
+with open(filename1) as f:
+    tradeprice = f.read().splitlines()
+
+with open(filename2) as f:
+    volume = f.read().splitlines()
+    
+with open(filename3) as f:
+    dates = f.read().splitlines()
+
+###################### RETRIEVE THE TRADE PRICE
+for i in range(len(tradeprice)):
+    tradeprice[i] = float(tradeprice[i])
+tradeprice = np.array(tradeprice)
+#tradeprice = tradeprice[1:]
+
+###################### RETRIEVE THE VOLUME
+for i in range(len(volume)):
+    volume[i] = float(volume[i])
+#volume = volume[1:]
+volume = np.array(volume)
+
+###################### RETRIEVE THE TRADE DATES
+for i in range(len(dates)):
+    dates[i] = int(dates[i])
+#dates = dates[1:]
+dates = np.array(dates)
+
+data = []
+for n in range(len(dates)):
+    data.append(n)
+data = np.array(data)
+
+#diff = np.diff(tradeprice)
+
+# Pack diff and volume for training.
+X = np.column_stack([tradeprice])
+
+###############################################################################
+# Run Gaussian HMM
+print("fitting to HMM and decoding ...", end="")
+    
+# Make an HMM instance and execute fit
+model = GaussianHMM(n_components=2, covariance_type="diag", n_iter=2000).fit(X)
+
+# Predict the optimal sequence of internal hidden state
+hidden_states = model.predict(X)
+
+print("done")
+
+print("Has the EM Algorithm converged?",model.monitor_.converged)
+
+print(hidden_states)
+
+###############################################################################
+# Print trained parameters and plot
+print("Transition matrix")
+print(model.transmat_)
+print()
+
+print("Means and vars of each hidden state")
+for i in range(model.n_components):
+    print("{0}th hidden state".format(i))
+    print("mean = ", model.means_[i])
+    print("var = ", np.diag(model.covars_[i]))
+    print()
+
+
+fig, axs = plt.subplots(model.n_components, sharex=True, sharey=True)
+colours = cm.rainbow(np.linspace(0, 1, model.n_components))
+for i, (ax, colour) in enumerate(zip(axs, colours)):
+    # Use fancy indexing to plot data in each state.
+    mask = hidden_states == i
+    ax.plot_date(data[mask], tradeprice[mask], ".-", c=colour)
+    ax.set_title("{0}th hidden state".format(i))
+
+    # Format the ticks.
+    ax.xaxis.set_major_locator(YearLocator())
+    ax.xaxis.set_minor_locator(MonthLocator())
+
+    ax.grid(True)
+
+plt.show()
+
+
+#### CHECK IF A DISTRIBUTION OF ZIGZAGS IS MORE COMMON IN A HIDDEN STATE ######
+counter0 = 0
+counter1 = 0
+hidden_new = []
+
+for i in range(len(boundaries)):
+    tuple = boundaries[i]
+    index_i = tuple[0]
+    index_j = tuple[1]
+    
+    while (index_i <= index_j):
+        if (hidden_states[index_i] == 0):
+            counter0 += 1
+        elif (hidden_states[index_i] == 1):
+            counter1 += 1
+        index_i +=1
+        
+    if (counter0 < counter1):
+        hidden_new.append(1)
+    
+    else:
+        hidden_new.append(0)
+    
+    counter0 = 0
+    counter1 = 0
+
+#print(hidden_new)
+U1_run=0 
+U1_rev=0 
+U2_run=0 
+U2_rev=0 
+U3_run=0 
+U3_rev=0 
+U4_run=0 
+U4_rev=0 
+U5_run=0 
+U5_rev=0 
+U6_run=0 
+U6_rev=0  
+U7_run=0 
+U7_rev=0  
+U8_run=0 
+U8_rev=0  
+U9_run=0 
+U9_rev=0 
+
+D1_run=0 
+D1_rev=0 
+D2_run=0 
+D2_rev=0 
+D3_run=0 
+D3_rev=0 
+D4_run=0 
+D4_rev=0 
+D5_run=0 
+D5_rev=0 
+D6_run=0 
+D6_rev=0  
+D7_run=0 
+D7_rev=0  
+D8_run=0 
+D8_rev=0  
+D9_run=0 
+D9_rev=0 
+
+for i in range(len(hidden_new)):
+    
+    ### Case for up legs
+    if (hidden_new[i] == 1 and feature_vector[i] == (1,1,1)):
+        U1_run += 1
+        
+    elif (hidden_new[i] == 0 and feature_vector[i] == (1,1,1)):
+        U1_rev += 1
+        
+    elif (hidden_new[i] == 1 and feature_vector[i] == (1,-1,1)):
+        U2_run += 1        
+        
+    elif (hidden_new[i] == 0 and feature_vector[i] == (1,-1,1)):
+        U2_rev += 1        
+        
+    elif (hidden_new[i] == 1 and feature_vector[i] == (1,1,0)):
+        U3_run += 1        
+        
+    elif (hidden_new[i] == 0 and feature_vector[i] == (1,1,0)):
+        U3_rev += 1            
+        
+    elif (hidden_new[i] == 1 and feature_vector[i] == (1,0,1)):
+        U4_run += 1        
+        
+    elif (hidden_new[i] == 0 and feature_vector[i] == (1,0,1)):
+        U4_rev += 1            
+        
+    elif (hidden_new[i] == 1 and feature_vector[i] == (1,0,0)):
+        U5_run += 1        
+        
+    elif (hidden_new[i] == 0 and feature_vector[i] == (1,0,0)):
+        U5_rev += 1            
+        
+    elif (hidden_new[i] == 1 and feature_vector[i] == (1,0,-1)):
+        U6_run += 1        
+        
+    elif (hidden_new[i] == 0 and feature_vector[i] == (1,0,-1)):
+        U6_rev += 1            
+        
+    elif (hidden_new[i] == 1 and feature_vector[i] == (1,-1,0)):
+        U7_run += 1        
+        
+    elif (hidden_new[i] == 0 and feature_vector[i] == (1,-1,0)):
+        U7_rev += 1            
+        
+    elif (hidden_new[i] == 1 and feature_vector[i] == (1,1,-1)):
+        U8_run += 1        
+        
+    elif (hidden_new[i] == 0 and feature_vector[i] == (1,1,-1)):
+        U8_rev += 1            
+        
+    elif (hidden_new[i] == 1 and feature_vector[i] == (1,-1,-1)):
+        U9_run += 1        
+        
+    elif (hidden_new[i] == 0 and feature_vector[i] == (1,-1,-1)):
+        U9_rev += 1            
+        
+
+    ### Case for down legs
+    if (hidden_new[i] == 1 and feature_vector[i] == (-1,1,-1)):
+        D1_run += 1
+        
+    elif (hidden_new[i] == 0 and feature_vector[i] == (-1,1,-1)):
+        D1_rev += 1
+        
+    elif (hidden_new[i] == 1 and feature_vector[i] == (-1,-1,-1)):
+        D2_run += 1        
+        
+    elif (hidden_new[i] == 0 and feature_vector[i] == (-1,-1,-1)):
+        D2_rev += 1        
+        
+    elif (hidden_new[i] == 1 and feature_vector[i] == (-1,1,0)):
+        D3_run += 1        
+        
+    elif (hidden_new[i] == 0 and feature_vector[i] == (-1,1,0)):
+        D3_rev += 1            
+        
+    elif (hidden_new[i] == 1 and feature_vector[i] == (-1,0,-1)):
+        D4_run += 1        
+        
+    elif (hidden_new[i] == 0 and feature_vector[i] == (-1,0,-1)):
+        D4_rev += 1            
+        
+    elif (hidden_new[i] == 1 and feature_vector[i] == (-1,0,0)):
+        D5_run += 1        
+        
+    elif (hidden_new[i] == 0 and feature_vector[i] == (-1,0,0)):
+        D5_rev += 1            
+        
+    elif (hidden_new[i] == 1 and feature_vector[i] == (-1,0,1)):
+        D6_run += 1        
+        
+    elif (hidden_new[i] == 0 and feature_vector[i] == (-1,0,1)):
+        D6_rev += 1            
+        
+    elif (hidden_new[i] == 1 and feature_vector[i] == (-1,-1,0)):
+        D7_run += 1        
+        
+    elif (hidden_new[i] == 0 and feature_vector[i] == (-1,-1,0)):
+        D7_rev += 1            
+        
+    elif (hidden_new[i] == 1 and feature_vector[i] == (-1,1,1)):
+        D8_run += 1        
+        
+    elif (hidden_new[i] == 0 and feature_vector[i] == (-1,1,1)):
+        D8_rev += 1            
+        
+    elif (hidden_new[i] == 1 and feature_vector[i] == (-1,-1,1)):
+        D9_run += 1        
+        
+    elif (hidden_new[i] == 0 and feature_vector[i] == (-1,-1,1)):
+        D9_rev += 1         
+        
+        
+print("U Trends:", U1_run,U2_run,U3_run,U4_run,U5_run,U6_run,U7_run,U8_run,U9_run)
+print("U Trends:", U1_rev,U2_rev,U3_rev,U4_rev,U5_rev,U6_rev,U7_rev,U8_rev,U9_rev)
+print("D Trends:", D1_run,D2_run,D3_run,D4_run,D5_run,D6_run,D7_run,D8_run,D9_run)
+print("D Trends:", D1_rev,D2_rev,D3_rev,D4_rev,D5_rev,D6_rev,D7_rev,D8_rev,D9_rev)
+
+distribution_zigzag_up_state = []
+distribution_zigzag_up_state.append(U1_run) 
+distribution_zigzag_up_state.append(U1_rev)
+distribution_zigzag_up_state.append(U2_run) 
+distribution_zigzag_up_state.append(U2_rev)
+distribution_zigzag_up_state.append(U3_run) 
+distribution_zigzag_up_state.append(U3_rev)
+distribution_zigzag_up_state.append(U4_run) 
+distribution_zigzag_up_state.append(U4_rev)
+distribution_zigzag_up_state.append(U5_run) 
+distribution_zigzag_up_state.append(U5_rev)
+distribution_zigzag_up_state.append(U6_run) 
+distribution_zigzag_up_state.append(U6_rev)
+distribution_zigzag_up_state.append(U7_run) 
+distribution_zigzag_up_state.append(U7_rev)
+distribution_zigzag_up_state.append(U8_run) 
+distribution_zigzag_up_state.append(U8_rev)
+distribution_zigzag_up_state.append(U9_run) 
+distribution_zigzag_up_state.append(U9_rev)
+
+distribution_zigzag_down_state = []
+distribution_zigzag_down_state.append(D1_run) 
+distribution_zigzag_down_state.append(D1_rev)
+distribution_zigzag_down_state.append(D2_run) 
+distribution_zigzag_down_state.append(D2_rev)
+distribution_zigzag_down_state.append(D3_run) 
+distribution_zigzag_down_state.append(D3_rev)
+distribution_zigzag_down_state.append(D4_run) 
+distribution_zigzag_down_state.append(D4_rev)
+distribution_zigzag_down_state.append(D5_run) 
+distribution_zigzag_down_state.append(D5_rev)
+distribution_zigzag_down_state.append(D6_run) 
+distribution_zigzag_down_state.append(D6_rev)
+distribution_zigzag_down_state.append(D7_run) 
+distribution_zigzag_down_state.append(D7_rev)
+distribution_zigzag_down_state.append(D8_run) 
+distribution_zigzag_down_state.append(D8_rev)
+distribution_zigzag_down_state.append(D9_run) 
+distribution_zigzag_down_state.append(D9_rev)
+
+#################### PLOT THE DISTRIBUTION (UP)
+
+weights = distribution_zigzag_up_state/np.sum(distribution_zigzag_up_state)
+x=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17]
+labels=['U1','U1','U2','U2','U3','U3','U4','U4','U5','U5','U6','U6','U7','U7','U8','U8','U9','U9']
+plt.bar(x, weights, align='center')
+plt.xticks(x, labels)
+plt.xlabel("Distribution of zigzags")
+plt.ylabel("Probability")
+
+plt.show()
+
+#################### PLOT THE DISTRIBUTION (DOWN)
+
+weights = distribution_zigzag_down_state/np.sum(distribution_zigzag_down_state)
+x=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17]
+labels=['D1','D1','D2','D2','D3','D3','D4','D4','D5','D5','D6','D6','D7','D7','D8','D8','D9','D9']
+plt.bar(x, weights, align='center')
+plt.xticks(x, labels)
+plt.xlabel("Distribution of zigzags")
+plt.ylabel("Probability")
+
+plt.show()
