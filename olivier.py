@@ -4,6 +4,9 @@ from itertools import zip_longest
 from itertools import groupby
 import numpy as np
 import matplotlib.pyplot as plt
+from math import sqrt
+from scipy import stats
+
 
 ################################### GET A SPECIFIC WORD IN THE LINE
 def my_txt(text, target):
@@ -664,7 +667,6 @@ import numpy as np
 from matplotlib import cm, pyplot as plt
 from matplotlib.dates import YearLocator, MonthLocator
 
-
 from hmmlearn.hmm import GaussianHMM
 
 
@@ -720,7 +722,7 @@ X = np.column_stack([tradeprice])
 print("fitting to HMM and decoding ...", end="")
     
 # Make an HMM instance and execute fit
-model = GaussianHMM(n_components=3, covariance_type="diag", n_iter=2000).fit(X)
+model = GaussianHMM(n_components=3, covariance_type="diag", n_iter=2000, tol=0).fit(X)
 
 # Predict the optimal sequence of internal hidden state
 hidden_states = model.predict(X)
@@ -737,14 +739,45 @@ print("Transition matrix")
 print(model.transmat_)
 print()
 
+mean = []
+var = []
 print("Means and vars of each hidden state")
 for i in range(model.n_components):
     print("{0}th hidden state".format(i))
     print("mean = ", model.means_[i])
     print("var = ", np.diag(model.covars_[i]))
     print()
+    mean.append(model.means_[i])
+    var.append(np.diag(model.covars_[i]))
 
 
+############# Retrieve the mean, variance and number of sample of each state
+mean_state0 = mean[0] 
+var_state0 = var[0]
+   
+mean_state1 = mean[1]
+var_state1 = var[1]
+
+mean_state2 = mean[2]  
+var_state2 = var[2]  
+
+no_state0 = 0
+no_state1 = 0
+no_state2 = 0
+
+for i in range(len(hidden_states)):
+    if (hidden_states[i] == 0):
+        no_state0 += 1
+    
+    elif (hidden_states[i] == 1):
+        no_state1 += 1
+
+    elif (hidden_states[i] == 2):
+        no_state2 += 1 
+ 
+       
+############ Plot the graph
+       
 fig, axs = plt.subplots(model.n_components, sharex=True, sharey=True)
 colours = cm.rainbow(np.linspace(0, 1, model.n_components))
 for i, (ax, colour) in enumerate(zip(axs, colours)):
@@ -763,9 +796,9 @@ plt.show()
 
 
 #### CHECK IF A DISTRIBUTION OF ZIGZAGS IS MORE COMMON IN A HIDDEN STATE ######
-########### STATE 1 is for REVERSAL
-########### STATE 2 is for RUN
-########### STATE 3 is for NEUTRAL
+########### STATE 0 is for REVERSAL
+########### STATE 1 is for RUN
+########### STATE 2 is for NEUTRAL
 
 counter0 = 0
 counter1 = 0
@@ -1114,3 +1147,154 @@ plt.xlabel("Distribution of zigzags")
 plt.ylabel("Probability")
 
 plt.show()
+
+
+
+###############################################################################
+###############################################################################
+############################ STATISTICAL SIGNIFICANCE #########################
+
+#################### Welch's T-TEST (using a 5% significance level)
+#################### H0: mean_state(i) == mean_state(j)
+#################### H1: mean_state(i) != mean_state(j)
+from scipy.stats import ttest_ind, ttest_ind_from_stats
+from scipy.special import stdtr
+
+######### 1st case: between state1 and state0
+abar1 = mean_state1
+avar1 = var_state1
+na1 = no_state1
+adof1 = na1 - 1
+
+bbar1 = mean_state0
+bvar1 = var_state0
+nb1 = no_state0
+bdof1 = nb1 - 1
+
+
+tf1 = (abar1 - bbar1) / np.sqrt(avar1/na1 + bvar1/nb1)
+dof1 = (avar1/na1 + bvar1/nb1)**2 / (avar1**2/(na1**2*adof1) + bvar1**2/(nb1**2*bdof1))
+pf1 = 2*stdtr(dof1, -np.abs(tf1))
+
+conf1_1 = (abar1 - bbar1)-tf1*np.sqrt(avar1/na1 + bvar1/nb1)
+conf2_1 = (abar1 - bbar1)+tf1*np.sqrt(avar1/na1 + bvar1/nb1)
+
+print(conf1_1, conf2_1)
+
+if (abs(tf1)>pf1):
+    print("Reject the null hypothesis (between State1 and State0)")
+    
+else:
+    print("Cannot reject the null hypothesis (between State1 and State0)")
+    
+    
+######### 2nd case: between state2 and state0
+abar2 = mean_state2
+avar2 = var_state2
+na2 = no_state2
+adof2 = na2 - 1
+
+bbar2 = mean_state0
+bvar2 = var_state0
+nb2 = no_state0
+bdof2 = nb2 - 1
+
+
+tf2 = (abar2 - bbar2) / np.sqrt(avar2/na2 + bvar2/nb2)
+dof2 = (avar2/na2 + bvar2/nb2)**2 / (avar2**2/(na2**2*adof2) + bvar2**2/(nb2**2*bdof2))
+pf2 = 2*stdtr(dof2, -np.abs(tf2))
+
+conf1_2 = (abar2 - bbar2)-tf2*np.sqrt(avar2/na2 + bvar2/nb2)
+conf2_2 = (abar2 - bbar2)+tf2*np.sqrt(avar2/na2 + bvar2/nb2)
+
+print(conf1_2, conf2_2)
+
+if (abs(tf2)>pf2):
+    print("Reject the null hypothesis (between State2 and State0)")
+    
+else:
+    print("Cannot reject the null hypothesis (between State2 and State0)")    
+    
+
+######### 3rd case: between state2 and state1
+abar3 = mean_state2
+avar3 = var_state2
+na3 = no_state2
+adof3 = na3 - 1
+
+bbar3 = mean_state1
+bvar3 = var_state1
+nb3 = no_state1
+bdof3 = nb3 - 1
+
+
+tf3 = (abar3 - bbar3) / np.sqrt(avar3/na3 + bvar3/nb3)
+dof3 = (avar3/na3 + bvar3/nb3)**2 / (avar3**2/(na3**2*adof3) + bvar3**2/(nb3**2*bdof3))
+pf3 = 2*stdtr(dof3, -np.abs(tf3))
+
+conf1_3 = (abar2 - bbar2)-(tf2*np.sqrt(avar2/na2 + bvar2/nb2))
+conf2_3 = (abar2 - bbar2)+(tf2*np.sqrt(avar2/na2 + bvar2/nb2))
+
+print(conf1_3, conf2_3)
+
+if (abs(tf3)>pf3):
+    print("Reject the null hypothesis (between State2 and State1)")
+    
+else:
+    print("Cannot reject the null hypothesis (between State2 and State1)") 
+
+
+
+########## QQ-PLOT of the annualised returns
+import numpy as np 
+import pylab 
+import scipy.stats as stats
+from statistics import variance
+from statistics import mean
+
+list_state0 = []
+returns_state0 = []
+list_state1 = []
+returns_state1 = []
+list_state2 = []
+returns_state2 = []
+
+# Returns for Hidden States:
+for i in range(len(hidden_states)):
+    if (hidden_states[i] == 0):
+        list_state0.append(tradeprice[i])
+
+    elif (hidden_states[i] == 1):
+        list_state1.append(tradeprice[i])
+        
+    elif (hidden_states[i] == 2):
+        list_state2.append(tradeprice[i])
+    
+
+diff_state0 = np.diff(list_state0)
+diff_state1 = np.diff(list_state1)
+diff_state2 = np.diff(list_state2)
+
+no_sample0 = len(diff_state0)
+no_sample1 = len(diff_state1)
+no_sample2 = len(diff_state2)
+
+#### QQ-PLOT of Returns in Hidden State 0
+stats.probplot(diff_state0, dist="norm", plot=pylab)
+pylab.show()
+print("Mean of Hidden State 0: ",mean(diff_state0))
+
+#### QQ-PLOT of Returns in Hidden State 1
+stats.probplot(diff_state1, dist="norm", plot=pylab)
+pylab.show()
+print("Mean of Hidden State 1: ",mean(diff_state1))
+
+#### QQ-PLOT of Returns in Hidden State 2
+stats.probplot(diff_state2, dist="norm", plot=pylab)
+pylab.show()
+print("Mean of Hidden State 2: ",mean(diff_state2))
+
+    
+###############################################################################
+###############################################################################
+############################### PREDICTION ####################################
