@@ -1297,6 +1297,60 @@ pylab.show()
 print("Mean of returns of Hidden State 2: ",mean(diff_state2))
 print("Variance of returns of Hidden State 2: ",variance(diff_state2))
 
+
+######################### Returns from Hidden State 0
+mu, sigma = mean(diff_state0), variance(diff_state0)
+x = diff_state0
+plt.clf()
+
+# the histogram of the data
+histvals, binvals, patches = plt.hist(
+   x, bins=50, normed=1, facecolor='g', alpha=0.75, label='my data')
+
+plt.xlabel('x')
+plt.ylabel('Probability')
+plt.title('Gaussian distribution of Hidden State 0')
+plt.text(-2, 0.45, r'$\mu=0,\ \sigma=1$')
+plt.xlim(-2, 2)
+plt.ylim(0, 1)
+plt.grid(True)
+
+
+######################### Returns from Hidden State 1
+mu, sigma = mean(diff_state1), variance(diff_state1)
+x = diff_state1
+plt.clf()
+
+# the histogram of the data
+histvals, binvals, patches = plt.hist(
+   x, bins=50, normed=1, facecolor='g', alpha=0.75, label='my data')
+
+plt.xlabel('x')
+plt.ylabel('Probability')
+plt.title('Gaussian distribution of Hidden State 1')
+plt.text(-2, 0.45, r'$\mu=0,\ \sigma=1$')
+plt.xlim(-2, 2)
+plt.ylim(0, 1)
+plt.grid(True)
+
+
+######################### Returns from Hidden State 2
+mu, sigma = mean(diff_state2), variance(diff_state2)
+x = diff_state2
+plt.clf()
+
+# the histogram of the data
+histvals, binvals, patches = plt.hist(
+   x, bins=50, normed=1, facecolor='g', alpha=0.75, label='my data')
+
+plt.xlabel('x')
+plt.ylabel('Probability')
+plt.title('Gaussian distribution of Hidden State 2')
+plt.text(-2, 0.45, r'$\mu=0,\ \sigma=1$')
+plt.xlim(-2, 2)
+plt.ylim(0, 1)
+plt.grid(True)
+
     
 ###############################################################################
 ###############################################################################
