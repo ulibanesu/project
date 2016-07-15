@@ -1176,8 +1176,8 @@ tf1 = (abar1 - bbar1) / np.sqrt(avar1/na1 + bvar1/nb1)
 dof1 = (avar1/na1 + bvar1/nb1)**2 / (avar1**2/(na1**2*adof1) + bvar1**2/(nb1**2*bdof1))
 pf1 = 2*stdtr(dof1, -np.abs(tf1))
 
-conf1_1 = (abar1 - bbar1)-tf1*np.sqrt(avar1/na1 + bvar1/nb1)
-conf2_1 = (abar1 - bbar1)+tf1*np.sqrt(avar1/na1 + bvar1/nb1)
+conf1_1 = (abar1 - bbar1)-(tf1*np.sqrt(avar1/na1 + bvar1/nb1))
+conf2_1 = (abar1 - bbar1)+(tf1*np.sqrt(avar1/na1 + bvar1/nb1))
 
 print(conf1_1, conf2_1)
 
@@ -1204,8 +1204,8 @@ tf2 = (abar2 - bbar2) / np.sqrt(avar2/na2 + bvar2/nb2)
 dof2 = (avar2/na2 + bvar2/nb2)**2 / (avar2**2/(na2**2*adof2) + bvar2**2/(nb2**2*bdof2))
 pf2 = 2*stdtr(dof2, -np.abs(tf2))
 
-conf1_2 = (abar2 - bbar2)-tf2*np.sqrt(avar2/na2 + bvar2/nb2)
-conf2_2 = (abar2 - bbar2)+tf2*np.sqrt(avar2/na2 + bvar2/nb2)
+conf1_2 = (abar2 - bbar2)-(tf2*np.sqrt(avar2/na2 + bvar2/nb2))
+conf2_2 = (abar2 - bbar2)+(tf2*np.sqrt(avar2/na2 + bvar2/nb2))
 
 print(conf1_2, conf2_2)
 
@@ -1232,8 +1232,8 @@ tf3 = (abar3 - bbar3) / np.sqrt(avar3/na3 + bvar3/nb3)
 dof3 = (avar3/na3 + bvar3/nb3)**2 / (avar3**2/(na3**2*adof3) + bvar3**2/(nb3**2*bdof3))
 pf3 = 2*stdtr(dof3, -np.abs(tf3))
 
-conf1_3 = (abar2 - bbar2)-(tf2*np.sqrt(avar2/na2 + bvar2/nb2))
-conf2_3 = (abar2 - bbar2)+(tf2*np.sqrt(avar2/na2 + bvar2/nb2))
+conf1_3 = (abar3 - bbar3)-(tf3*np.sqrt(avar3/na3 + bvar3/nb3))
+conf2_3 = (abar3 - bbar3)+(tf3*np.sqrt(avar3/na3 + bvar3/nb3))
 
 print(conf1_3, conf2_3)
 
@@ -1282,17 +1282,20 @@ no_sample2 = len(diff_state2)
 #### QQ-PLOT of Returns in Hidden State 0
 stats.probplot(diff_state0, dist="norm", plot=pylab)
 pylab.show()
-print("Mean of Hidden State 0: ",mean(diff_state0))
+print("Mean of returns of Hidden State 0: ",mean(diff_state0))
+print("Variance of returns of Hidden State 0: ",variance(diff_state0))
 
 #### QQ-PLOT of Returns in Hidden State 1
 stats.probplot(diff_state1, dist="norm", plot=pylab)
 pylab.show()
-print("Mean of Hidden State 1: ",mean(diff_state1))
+print("Mean of returns of Hidden State 1: ",mean(diff_state1))
+print("Variance of returns of Hidden State 1: ",variance(diff_state1))
 
 #### QQ-PLOT of Returns in Hidden State 2
 stats.probplot(diff_state2, dist="norm", plot=pylab)
 pylab.show()
-print("Mean of Hidden State 2: ",mean(diff_state2))
+print("Mean of returns of Hidden State 2: ",mean(diff_state2))
+print("Variance of returns of Hidden State 2: ",variance(diff_state2))
 
     
 ###############################################################################
