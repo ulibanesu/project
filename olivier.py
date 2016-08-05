@@ -4,8 +4,8 @@ from itertools import zip_longest
 from itertools import groupby
 import numpy as np
 import matplotlib.pyplot as plt
-from math import sqrt
-from scipy import stats
+#from math import sqrt
+from scipy import stats as stat
 
 
 ################################### GET A SPECIFIC WORD IN THE LINE
@@ -712,10 +712,14 @@ for n in range(len(dates)):
     data.append(n)
 data = np.array(data)
 
-#diff = np.diff(tradeprice)
+diff = []
+diff.append(0)
+diff.extend(np.diff(tradeprice))
+
+diff = np.array(diff)
 
 # Pack diff and volume for training.
-X = np.column_stack([tradeprice])
+X = np.column_stack([diff])
 
 ###############################################################################
 # Run Gaussian HMM
@@ -725,7 +729,11 @@ print("fitting to HMM and decoding ...", end="")
 model = GaussianHMM(n_components=3, covariance_type="diag", n_iter=2000, tol=0).fit(X)
 
 # Predict the optimal sequence of internal hidden state
-hidden_states = model.predict(X)
+hidden_states = []
+#hidden_states.append(0)
+hidden_states.extend(model.predict(X))
+
+hidden_states = np.array(hidden_states)
 
 print("done")
 
@@ -783,7 +791,7 @@ colours = cm.rainbow(np.linspace(0, 1, model.n_components))
 for i, (ax, colour) in enumerate(zip(axs, colours)):
     # Use fancy indexing to plot data in each state.
     mask = hidden_states == i
-    ax.plot_date(data[mask], tradeprice[mask], ".-", c=colour)
+    ax.plot_date(data[mask], diff[mask], ".-", c=colour)
     ax.set_title("{0}th hidden state".format(i))
 
     # Format the ticks.
@@ -796,9 +804,9 @@ plt.show()
 
 
 #### CHECK IF A DISTRIBUTION OF ZIGZAGS IS MORE COMMON IN A HIDDEN STATE ######
-########### STATE 0 is for REVERSAL
-########### STATE 1 is for RUN
-########### STATE 2 is for NEUTRAL
+########### STATE 0 is for REVERSAL (BEARISH)
+########### STATE 1 is for NEUTRAL
+########### STATE 2 is for RUN (BULLISH)
 
 counter0 = 0
 counter1 = 0
@@ -893,82 +901,82 @@ for i in range(len(hidden_new)):
     
     ### Case for up legs
     if (hidden_new[i] == 1 and feature_vector[i] == (1,1,1)):
-        U1_run += 1
+         U1_neu += 1
 
     elif (hidden_new[i] == 2 and feature_vector[i] == (1,1,1)):
-        U1_neu += 1
+         U1_run += 1
         
     elif (hidden_new[i] == 0 and feature_vector[i] == (1,1,1)):
         U1_rev += 1
         
     elif (hidden_new[i] == 1 and feature_vector[i] == (1,-1,1)):
-        U2_run += 1 
+        U2_neu += 1 
 
     elif (hidden_new[i] == 2 and feature_vector[i] == (1,-1,1)):
-        U2_neu += 1 
+        U2_run += 1 
         
     elif (hidden_new[i] == 0 and feature_vector[i] == (1,-1,1)):
         U2_rev += 1        
         
     elif (hidden_new[i] == 1 and feature_vector[i] == (1,1,0)):
-        U3_run += 1 
+        U3_neu += 1 
 
     elif (hidden_new[i] == 2 and feature_vector[i] == (1,1,0)):
-        U3_neu += 1 
+        U3_run += 1 
         
     elif (hidden_new[i] == 0 and feature_vector[i] == (1,1,0)):
         U3_rev += 1            
         
     elif (hidden_new[i] == 1 and feature_vector[i] == (1,0,1)):
-        U4_run += 1 
+        U4_neu += 1 
 
     elif (hidden_new[i] == 2 and feature_vector[i] == (1,0,1)):
-        U4_neu += 1 
+        U4_run += 1 
         
     elif (hidden_new[i] == 0 and feature_vector[i] == (1,0,1)):
         U4_rev += 1            
         
     elif (hidden_new[i] == 1 and feature_vector[i] == (1,0,0)):
-        U5_run += 1  
+        U5_neu += 1  
 
     elif (hidden_new[i] == 2 and feature_vector[i] == (1,0,0)):
-        U5_neu += 1  
+        U5_run += 1  
         
     elif (hidden_new[i] == 0 and feature_vector[i] == (1,0,0)):
         U5_rev += 1            
         
     elif (hidden_new[i] == 1 and feature_vector[i] == (1,0,-1)):
-        U6_run += 1  
+        U6_neu += 1  
 
     elif (hidden_new[i] == 2 and feature_vector[i] == (1,0,-1)):
-        U6_neu += 1  
+        U6_run += 1  
         
     elif (hidden_new[i] == 0 and feature_vector[i] == (1,0,-1)):
         U6_rev += 1            
         
     elif (hidden_new[i] == 1 and feature_vector[i] == (1,-1,0)):
-        U7_run += 1 
+        U7_neu += 1 
 
     elif (hidden_new[i] == 2 and feature_vector[i] == (1,-1,0)):
-        U7_neu += 1 
+        U7_run += 1 
         
     elif (hidden_new[i] == 0 and feature_vector[i] == (1,-1,0)):
         U7_rev += 1            
         
     elif (hidden_new[i] == 1 and feature_vector[i] == (1,1,-1)):
-        U8_run += 1  
+        U8_neu += 1  
 
     elif (hidden_new[i] == 2 and feature_vector[i] == (1,1,-1)):
-        U8_neu += 1  
+        U8_run += 1  
         
     elif (hidden_new[i] == 0 and feature_vector[i] == (1,1,-1)):
         U8_rev += 1            
         
     elif (hidden_new[i] == 1 and feature_vector[i] == (1,-1,-1)):
-        U9_run += 1   
+        U9_neu += 1   
 
     elif (hidden_new[i] == 2 and feature_vector[i] == (1,-1,-1)):
-        U9_neu += 1   
+        U9_run += 1   
         
     elif (hidden_new[i] == 0 and feature_vector[i] == (1,-1,-1)):
         U9_rev += 1            
@@ -976,82 +984,82 @@ for i in range(len(hidden_new)):
 
     ### Case for down legs
     if (hidden_new[i] == 1 and feature_vector[i] == (-1,1,-1)):
-        D1_run += 1
+        D1_neu += 1
 
     elif (hidden_new[i] == 2 and feature_vector[i] == (-1,1,-1)):
-        D1_neu += 1
+        D1_run += 1
         
     elif (hidden_new[i] == 0 and feature_vector[i] == (-1,1,-1)):
         D1_rev += 1
         
     elif (hidden_new[i] == 1 and feature_vector[i] == (-1,-1,-1)):
-        D2_run += 1 
+        D2_neu += 1 
 
     elif (hidden_new[i] == 2 and feature_vector[i] == (-1,-1,-1)):
-        D2_neu += 2 
+        D2_run += 2 
         
     elif (hidden_new[i] == 0 and feature_vector[i] == (-1,-1,-1)):
         D2_rev += 1        
         
     elif (hidden_new[i] == 1 and feature_vector[i] == (-1,1,0)):
-        D3_run += 1  
+        D3_neu += 1  
 
     elif (hidden_new[i] == 2 and feature_vector[i] == (-1,1,0)):
-        D3_neu += 1  
+        D3_run += 1  
         
     elif (hidden_new[i] == 0 and feature_vector[i] == (-1,1,0)):
         D3_rev += 1            
         
     elif (hidden_new[i] == 1 and feature_vector[i] == (-1,0,-1)):
-        D4_run += 1
+        D4_neu += 1
 
     elif (hidden_new[i] == 2 and feature_vector[i] == (-1,0,-1)):
-        D4_neu += 1        
+        D4_run += 1        
         
     elif (hidden_new[i] == 0 and feature_vector[i] == (-1,0,-1)):
         D4_rev += 1            
         
     elif (hidden_new[i] == 1 and feature_vector[i] == (-1,0,0)):
-        D5_run += 1
+        D5_neu += 1
 
     elif (hidden_new[i] == 2 and feature_vector[i] == (-1,0,0)):
-        D5_neu += 1        
+        D5_run += 1        
         
     elif (hidden_new[i] == 0 and feature_vector[i] == (-1,0,0)):
         D5_rev += 1            
         
     elif (hidden_new[i] == 1 and feature_vector[i] == (-1,0,1)):
-        D6_run += 1  
+        D6_neu += 1  
 
     elif (hidden_new[i] == 2 and feature_vector[i] == (-1,0,1)):
-        D6_neu += 1  
+        D6_run += 1  
         
     elif (hidden_new[i] == 0 and feature_vector[i] == (-1,0,1)):
         D6_rev += 1            
         
     elif (hidden_new[i] == 1 and feature_vector[i] == (-1,-1,0)):
-        D7_run += 1  
+        D7_neu += 1  
 
     elif (hidden_new[i] == 2 and feature_vector[i] == (-1,-1,0)):
-        D7_neu += 1  
+        D7_run += 1  
         
     elif (hidden_new[i] == 0 and feature_vector[i] == (-1,-1,0)):
         D7_rev += 1            
         
     elif (hidden_new[i] == 1 and feature_vector[i] == (-1,1,1)):
-        D8_run += 1 
+        D8_neu += 1 
 
     elif (hidden_new[i] == 2 and feature_vector[i] == (-1,1,1)):
-        D8_neu += 1 
+        D8_run += 1 
         
     elif (hidden_new[i] == 0 and feature_vector[i] == (-1,1,1)):
         D8_rev += 1            
         
     elif (hidden_new[i] == 1 and feature_vector[i] == (-1,-1,1)):
-        D9_run += 1  
+        D9_neu += 1  
 
     elif (hidden_new[i] == 2 and feature_vector[i] == (-1,-1,1)):
-        D9_neu += 1 
+        D9_run += 1 
         
     elif (hidden_new[i] == 0 and feature_vector[i] == (-1,-1,1)):
         D9_rev += 1         
@@ -1179,7 +1187,9 @@ pf1 = 2*stdtr(dof1, -np.abs(tf1))
 conf1_1 = (abar1 - bbar1)-(tf1*np.sqrt(avar1/na1 + bvar1/nb1))
 conf2_1 = (abar1 - bbar1)+(tf1*np.sqrt(avar1/na1 + bvar1/nb1))
 
-print(conf1_1, conf2_1)
+print("p-value: ", pf1)
+print("t-statistic: ", tf1)
+print("Confidence interval: ", conf1_1, conf2_1)
 
 if (abs(tf1)>pf1):
     print("Reject the null hypothesis (between State1 and State0)")
@@ -1207,7 +1217,9 @@ pf2 = 2*stdtr(dof2, -np.abs(tf2))
 conf1_2 = (abar2 - bbar2)-(tf2*np.sqrt(avar2/na2 + bvar2/nb2))
 conf2_2 = (abar2 - bbar2)+(tf2*np.sqrt(avar2/na2 + bvar2/nb2))
 
-print(conf1_2, conf2_2)
+print("p-value: ", pf2)
+print("t-statistic: ", tf2)
+print("Confidence interval: ", conf1_2, conf2_2)
 
 if (abs(tf2)>pf2):
     print("Reject the null hypothesis (between State2 and State0)")
@@ -1235,7 +1247,9 @@ pf3 = 2*stdtr(dof3, -np.abs(tf3))
 conf1_3 = (abar3 - bbar3)-(tf3*np.sqrt(avar3/na3 + bvar3/nb3))
 conf2_3 = (abar3 - bbar3)+(tf3*np.sqrt(avar3/na3 + bvar3/nb3))
 
-print(conf1_3, conf2_3)
+print("p-value: ", pf3)
+print("t-statistic: ", tf3)
+print("Confidence interval: ", conf1_3, conf2_3)
 
 if (abs(tf3)>pf3):
     print("Reject the null hypothesis (between State2 and State1)")
@@ -1301,55 +1315,66 @@ print("Variance of returns of Hidden State 2: ",variance(diff_state2))
 ######################### Returns from Hidden State 0
 mu, sigma = mean(diff_state0), variance(diff_state0)
 x = diff_state0
-plt.clf()
+
+
+
 
 # the histogram of the data
+plt.figure(1)
 histvals, binvals, patches = plt.hist(
    x, bins=50, normed=1, facecolor='g', alpha=0.75, label='my data')
+
+pdf = stat.norm.pdf(binvals)
+plt.plot(binvals, pdf, 'r--')
 
 plt.xlabel('x')
 plt.ylabel('Probability')
 plt.title('Gaussian distribution of Hidden State 0')
 plt.text(-2, 0.45, r'$\mu=0,\ \sigma=1$')
-plt.xlim(-2, 2)
-plt.ylim(0, 1)
+plt.xlim(-1.5, 1.5)
+plt.ylim(0, 8)
 plt.grid(True)
 
 
+plt.show()
 ######################### Returns from Hidden State 1
 mu, sigma = mean(diff_state1), variance(diff_state1)
 x = diff_state1
-plt.clf()
 
-# the histogram of the data
+
+plt.figure(2)
 histvals, binvals, patches = plt.hist(
    x, bins=50, normed=1, facecolor='g', alpha=0.75, label='my data')
+
+pdf = stat.norm.pdf(binvals)
+plt.plot(binvals, pdf, 'r--')
 
 plt.xlabel('x')
 plt.ylabel('Probability')
 plt.title('Gaussian distribution of Hidden State 1')
 plt.text(-2, 0.45, r'$\mu=0,\ \sigma=1$')
-plt.xlim(-2, 2)
-plt.ylim(0, 1)
+plt.xlim(-1.5, 1.5)
+plt.ylim(0, 8)
 plt.grid(True)
-
 
 ######################### Returns from Hidden State 2
 mu, sigma = mean(diff_state2), variance(diff_state2)
 x = diff_state2
-plt.clf()
-
-# the histogram of the data
+plt.figure(3)
 histvals, binvals, patches = plt.hist(
    x, bins=50, normed=1, facecolor='g', alpha=0.75, label='my data')
+
+pdf = stat.norm.pdf(binvals)
+plt.plot(binvals, pdf, 'r--')
 
 plt.xlabel('x')
 plt.ylabel('Probability')
 plt.title('Gaussian distribution of Hidden State 2')
 plt.text(-2, 0.45, r'$\mu=0,\ \sigma=1$')
-plt.xlim(-2, 2)
-plt.ylim(0, 1)
+plt.xlim(-1.5, 1.5)
+plt.ylim(0, 8)
 plt.grid(True)
+
 
     
 ###############################################################################
