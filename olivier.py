@@ -1066,8 +1066,11 @@ for i in range(len(hidden_new)):
 
         
 print("U Trends:", U1_run,U2_run,U3_run,U4_run,U5_run,U6_run,U7_run,U8_run,U9_run)
+print("U Trends:", U1_neu,U2_neu,U3_neu,U4_neu,U5_neu,U6_neu,U7_neu,U8_neu,U9_neu)
 print("U Trends:", U1_rev,U2_rev,U3_rev,U4_rev,U5_rev,U6_rev,U7_rev,U8_rev,U9_rev)
+
 print("D Trends:", D1_run,D2_run,D3_run,D4_run,D5_run,D6_run,D7_run,D8_run,D9_run)
+print("D Trends:", D1_neu,D2_neu,D3_neu,D4_neu,D5_neu,D6_neu,D7_neu,D8_neu,D9_neu)
 print("D Trends:", D1_rev,D2_rev,D3_rev,D4_rev,D5_rev,D6_rev,D7_rev,D8_rev,D9_rev)
 
 distribution_zigzag_up_state = []
@@ -1380,3 +1383,199 @@ plt.grid(True)
 ###############################################################################
 ###############################################################################
 ############################### PREDICTION ####################################
+
+###############################################################################
+#################### GET THE DISTRIBUTION OF EACH FEATURE VECTOR ##############
+########################## IN EACH OF THE HIDDEN STATES #######################
+
+#### CASE FOR U1
+U1_run_prob = U1_run/(U1_run + U1_neu + U1_rev)
+U1_neu_prob = U1_neu/(U1_run + U1_neu + U1_rev)
+U1_rev_prob = U1_rev/(U1_run + U1_neu + U1_rev)
+
+#### CASE FOR U2
+U2_run_prob = U2_run/(U2_run + U2_neu + U2_rev)
+U2_neu_prob = U2_neu/(U2_run + U2_neu + U2_rev)
+U2_rev_prob = U2_rev/(U2_run + U2_neu + U2_rev)
+
+#### CASE FOR U3
+U3_run_prob = U3_run/(U3_run + U3_neu + U3_rev)
+U3_neu_prob = U3_neu/(U3_run + U3_neu + U3_rev)
+U3_rev_prob = U3_rev/(U3_run + U3_neu + U3_rev)
+
+#### CASE FOR U4
+U4_run_prob = U4_run/(U4_run + U4_neu + U4_rev)
+U4_neu_prob = U4_neu/(U4_run + U4_neu + U4_rev)
+U4_rev_prob = U4_rev/(U4_run + U4_neu + U4_rev)
+
+#### CASE FOR U5
+U5_run_prob = U5_run/(U5_run + U5_neu + U5_rev)
+U5_neu_prob = U5_neu/(U5_run + U5_neu + U5_rev)
+U5_rev_prob = U5_rev/(U5_run + U5_neu + U5_rev)
+
+#### CASE FOR U6
+U6_run_prob = U6_run/(U6_run + U6_neu + U6_rev)
+U6_neu_prob = U6_neu/(U6_run + U6_neu + U6_rev)
+U6_rev_prob = U6_rev/(U6_run + U6_neu + U6_rev)
+
+#### CASE FOR U7
+U7_run_prob = U7_run/(U7_run + U7_neu + U7_rev)
+U7_neu_prob = U7_neu/(U7_run + U7_neu + U7_rev)
+U7_rev_prob = U7_rev/(U7_run + U7_neu + U7_rev)
+
+#### CASE FOR U8
+U8_run_prob = U8_run/(U8_run + U8_neu + U8_rev)
+U8_neu_prob = U8_neu/(U8_run + U8_neu + U8_rev)
+U8_rev_prob = U8_rev/(U8_run + U8_neu + U8_rev)
+
+#### CASE FOR U9
+U9_run_prob = U9_run/(U9_run + U9_neu + U9_rev)
+U9_neu_prob = U9_neu/(U9_run + U9_neu + U9_rev)
+U9_rev_prob = U9_rev/(U9_run + U9_neu + U9_rev)
+
+#### CASE FOR D1
+D1_run_prob = D1_run/(D1_run + D1_neu + D1_rev)
+D1_neu_prob = D1_neu/(D1_run + D1_neu + D1_rev)
+D1_rev_prob = D1_rev/(D1_run + D1_neu + D1_rev)
+
+#### CASE FOR D2
+D2_run_prob = D2_run/(D2_run + D2_neu + D2_rev)
+D2_neu_prob = D2_neu/(D2_run + D2_neu + D2_rev)
+D2_rev_prob = D2_rev/(D2_run + D2_neu + D2_rev)
+
+#### CASE FOR D3
+D3_run_prob = D3_run/(D3_run + D3_neu + D3_rev)
+D3_neu_prob = D3_neu/(D3_run + D3_neu + D3_rev)
+D3_rev_prob = D3_rev/(D3_run + D3_neu + D3_rev)
+
+#### CASE FOR D4
+D4_run_prob = D4_run/(D4_run + D4_neu + D4_rev)
+D4_neu_prob = D4_neu/(D4_run + D4_neu + D4_rev)
+D4_rev_prob = D4_rev/(D4_run + D4_neu + D4_rev)
+
+#### CASE FOR D5
+D5_run_prob = D5_run/(D5_run + D5_neu + D5_rev)
+D5_neu_prob = D5_neu/(D5_run + D5_neu + D5_rev)
+D5_rev_prob = D5_rev/(D5_run + D5_neu + D5_rev)
+
+#### CASE FOR D6
+D6_run_prob = D6_run/(D6_run + D6_neu + D6_rev)
+D6_neu_prob = D6_neu/(D6_run + D6_neu + D6_rev)
+D6_rev_prob = D6_rev/(D6_run + D6_neu + D6_rev)
+
+#### CASE FOR D7
+D7_run_prob = D7_run/(D7_run + D7_neu + D7_rev)
+D7_neu_prob = D7_neu/(D7_run + D7_neu + D7_rev)
+D7_rev_prob = D7_rev/(D7_run + D7_neu + D7_rev)
+
+#### CASE FOR D8
+D8_run_prob = D8_run/(D8_run + D8_neu + D8_rev)
+D8_neu_prob = D8_neu/(D8_run + D8_neu + D8_rev)
+D8_rev_prob = D8_rev/(D8_run + D8_neu + D8_rev)
+
+#### CASE FOR D9
+D9_run_prob = D9_run/(D9_run + D9_neu + D9_rev)
+D9_neu_prob = D9_neu/(D9_run + D9_neu + D9_rev)
+D9_rev_prob = D9_rev/(D9_run + D9_neu + D9_rev)
+
+
+###############################################################################
+#################### GET THE DISTRIBUTION OF FEATURE VECTORS ##################
+########################## IN EACH OF THE HIDDEN STATES #######################
+
+###### CASE FOR HIDDEN STATE 0 (REVERSAL)
+state_rev_prob = []
+state_rev_denom = U1_rev + U2_rev + U3_rev + U4_rev + U5_rev + U6_rev + U7_rev + U8_rev + U9_rev + D1_rev + D2_rev + D3_rev + D4_rev + D5_rev + D6_rev + D7_rev + D8_rev + D9_rev
+
+state_rev_prob.append(U1_rev/state_rev_denom)
+state_rev_prob.append(U2_rev/state_rev_denom)
+state_rev_prob.append(U3_rev/state_rev_denom)
+state_rev_prob.append(U4_rev/state_rev_denom)
+state_rev_prob.append(U5_rev/state_rev_denom)
+state_rev_prob.append(U6_rev/state_rev_denom)
+state_rev_prob.append(U7_rev/state_rev_denom)
+state_rev_prob.append(U8_rev/state_rev_denom)
+state_rev_prob.append(U9_rev/state_rev_denom)
+state_rev_prob.append(D1_rev/state_rev_denom)
+state_rev_prob.append(D2_rev/state_rev_denom)
+state_rev_prob.append(D3_rev/state_rev_denom)
+state_rev_prob.append(D4_rev/state_rev_denom)
+state_rev_prob.append(D5_rev/state_rev_denom)
+state_rev_prob.append(D6_rev/state_rev_denom)
+state_rev_prob.append(D7_rev/state_rev_denom)
+state_rev_prob.append(D8_rev/state_rev_denom)
+state_rev_prob.append(D9_rev/state_rev_denom)
+
+###### CASE FOR HIDDEN STATE 1 (NEUTRAL)
+state_neu_prob = []
+state_neu_denom = U1_neu + U2_neu + U3_neu + U4_neu + U5_neu + U6_neu + U7_neu + U8_neu + U9_neu + D1_neu + D2_neu + D3_neu + D4_neu + D5_neu + D6_neu + D7_neu + D8_neu + D9_neu
+
+state_neu_prob.append(U1_neu/state_neu_denom)
+state_neu_prob.append(U2_neu/state_neu_denom)
+state_neu_prob.append(U3_neu/state_neu_denom)
+state_neu_prob.append(U4_neu/state_neu_denom)
+state_neu_prob.append(U5_neu/state_neu_denom)
+state_neu_prob.append(U6_neu/state_neu_denom)
+state_neu_prob.append(U7_neu/state_neu_denom)
+state_neu_prob.append(U8_neu/state_neu_denom)
+state_neu_prob.append(U9_neu/state_neu_denom)
+state_neu_prob.append(D1_neu/state_neu_denom)
+state_neu_prob.append(D2_neu/state_neu_denom)
+state_neu_prob.append(D3_neu/state_neu_denom)
+state_neu_prob.append(D4_neu/state_neu_denom)
+state_neu_prob.append(D5_neu/state_neu_denom)
+state_neu_prob.append(D6_neu/state_neu_denom)
+state_neu_prob.append(D7_neu/state_neu_denom)
+state_neu_prob.append(D8_neu/state_neu_denom)
+state_neu_prob.append(D9_neu/state_neu_denom)
+
+###### CASE FOR HIDDEN STATE 2 (RUN)
+state_run_prob = []
+state_run_denom = U1_run + U2_run + U3_run + U4_run + U5_run + U6_run + U7_run + U8_run + U9_run + D1_run + D2_run + D3_run + D4_run + D5_run + D6_run + D7_run + D8_run + D9_run
+
+state_run_prob.append(U1_run/state_run_denom)
+state_run_prob.append(U2_run/state_run_denom)
+state_run_prob.append(U3_run/state_run_denom)
+state_run_prob.append(U4_run/state_run_denom)
+state_run_prob.append(U5_run/state_run_denom)
+state_run_prob.append(U6_run/state_run_denom)
+state_run_prob.append(U7_run/state_run_denom)
+state_run_prob.append(U8_run/state_run_denom)
+state_run_prob.append(U9_run/state_run_denom)
+state_run_prob.append(D1_run/state_run_denom)
+state_run_prob.append(D2_run/state_run_denom)
+state_run_prob.append(D3_run/state_run_denom)
+state_run_prob.append(D4_run/state_run_denom)
+state_run_prob.append(D5_run/state_run_denom)
+state_run_prob.append(D6_run/state_run_denom)
+state_run_prob.append(D7_run/state_run_denom)
+state_run_prob.append(D8_run/state_run_denom)
+state_run_prob.append(D9_run/state_run_denom)
+
+###############################################################################
+############################# MODEL SELECTION #################################
+### AIC
+temp = model.decode(X)
+logprob = temp[0]
+k1 = 3^2 + 2*3 - 1  # Case with 3 hidden states
+k2 = 2^2 + 2*2 - 1  # Case with 2 hidden states
+k3 = 4^2 + 2*4 - 1  # Case with 4 hidden states
+k4 = 5^2 + 2*5 - 1  # Case with 5 hidden states
+
+AIC1 = -2*logprob + 2*k1
+AIC2 = -2*logprob + 2*k2
+AIC3 = -2*logprob + 2*k3
+AIC4 = -2*logprob + 2*k4
+
+### BIC
+import math
+logM = math.log(len(tradeprice))
+
+BIC1 = -2*logprob + k1*logM
+BIC2 = -2*logprob + k2*logM
+BIC3 = -2*logprob + k3*logM
+BIC4 = -2*logprob + k4*logM
+
+
+
+
