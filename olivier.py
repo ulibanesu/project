@@ -1553,6 +1553,7 @@ state_run_prob.append(D8_run/state_run_denom)
 state_run_prob.append(D9_run/state_run_denom)
 
 ###############################################################################
+###############################################################################
 ############################# MODEL SELECTION #################################
 ### AIC
 temp = model.decode(X)
@@ -1577,5 +1578,38 @@ BIC3 = -2*logprob + k3*logM
 BIC4 = -2*logprob + k4*logM
 
 
+###############################################################################
+###############################################################################
+################################ PREDICTION ###################################
+state_time_t = hidden_states[-1]
+if (state_time_t == 0):
+    state_time_tPlusOne = np.argmax(model.transmat_[0])
+
+if (state_time_t == 1):
+    state_time_tPlusOne = np.argmax(model.transmat_[1])
+
+if (state_time_t == 2):
+    state_time_tPlusOne = np.argmax(model.transmat_[2])
 
 
+expected_returns = np.dot(model.transmat_, model.means_)
+returns_columnwise = list(zip(*expected_returns))
+returns = returns_columnwise[0] 
+
+predicted_prices = []
+lastN = 10
+
+current_price = tradeprice[-1]
+state = hidden_states[-lastN]
+current_date = 0
+predicted_prices.extend((current_date, current_price + returns[state]))
+
+lastN_new = lastN-1
+
+for idx in range(lastN_new):
+    state = hidden_states[-lastN_new+idx+1]
+    current_price = predicted_prices[-1]
+    current_date = idx+1
+    predicted_prices.extend((current_date, current_price + returns[state]))
+
+print(predicted_prices)
