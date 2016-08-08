@@ -1585,10 +1585,10 @@ state_time_t = hidden_states[-1]
 if (state_time_t == 0):
     state_time_tPlusOne = np.argmax(model.transmat_[0])
 
-if (state_time_t == 1):
+elif (state_time_t == 1):
     state_time_tPlusOne = np.argmax(model.transmat_[1])
 
-if (state_time_t == 2):
+elif (state_time_t == 2):
     state_time_tPlusOne = np.argmax(model.transmat_[2])
 
 
