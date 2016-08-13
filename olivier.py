@@ -123,7 +123,7 @@ def vwap_bid_zigzag(output_bid, output_bid_zigzag,
         result = numerator/denominator
 
     return result.tolist()
-    #print(output_bid_zigzag)
+    #print("and the winner is: ", len(output_bid_zigzag))
     #print(result)
     #print(len(result))
 
@@ -268,6 +268,7 @@ def final_output_f3(theta_output, phi, f3):
         else:
             f3.append(0)
     
+    return f3
     #print(f3)
     #print(len(f3))
 
@@ -447,7 +448,9 @@ def check_f3(f3, boundaries, tradeprice_dates, orderbook_dates):
     theta_output = theta(phi, VWAP_Spread)
     
     ############ FINAL OUTPUT TO GET THE F3 FEATURE
-    final_output_f3(theta_output, phi, f3)
+    f3_ = final_output_f3(theta_output, phi, f3)
+
+    return output_bid_zigzag, output_ask_zigzag, f3_
 
 ###############################################################################
 ########################### EXTRACT FROM THE DATA #############################
@@ -500,6 +503,8 @@ check_f2(tradeprice, f2, maxima)
 f3 = []
 
 check_f3(f3, boundaries, tradeprice_dates, orderbook_dates)
+output_bid_zigzag, output_ask_zigzag, f3_ = check_f3(f3, boundaries, tradeprice_dates, orderbook_dates)
+
 
 ####################### MAKE THE FEATURE VECTOR ###############################
 feature_vector = []
@@ -722,13 +727,13 @@ diff = np.array(diff)
 X = np.column_stack([diff])
 
 ###############################################################################
-# Run Gaussian HMM
-print("fitting to HMM and decoding ...", end="")
+###### Run the Gaussian Hidden Markov Model
+print("Fitting the HMM ...", end="")
     
-# Make an HMM instance and execute fit
+###### Make an HMM instance and fitting
 model = GaussianHMM(n_components=3, covariance_type="diag", n_iter=2000, tol=0).fit(X)
 
-# Predict the optimal sequence of internal hidden state
+###### Predict the optimal sequence of hidden states (using the Viterbi Algorithm)
 hidden_states = []
 #hidden_states.append(0)
 hidden_states.extend(model.predict(X))
@@ -737,7 +742,7 @@ hidden_states = np.array(hidden_states)
 
 print("done")
 
-print("Has the EM Algorithm converged?",model.monitor_.converged)
+print("Has the EM Algorithm converged? ",model.monitor_.converged)
 
 print(hidden_states)
 
@@ -1581,23 +1586,208 @@ BIC4 = -2*logprob + k4*logM
 ###############################################################################
 ###############################################################################
 ################################ PREDICTION ###################################
+from random import random
+
 state_time_t = hidden_states[-1]
+
 if (state_time_t == 0):
-    state_time_tPlusOne = np.argmax(model.transmat_[0])
+    
+    rand = random()
+    a00 = (model.transmat_[0][0])
+    a01 = (model.transmat_[0][1])
+    a02 = (model.transmat_[0][2])
+    
+    distrib0 = a00
+    distrib1 = a00 + a01
+    distrib2 = a00 + a01 + a02
+    
+    #### goes to the next time (ie. t+1)
+    if (rand <= distrib0):
+        state_time_tPlusOne = 0
+    
+    elif (rand <= distrib1):
+        state_time_tPlusOne = 1
+    
+    elif (rand <= distrib2):
+        state_time_tPlusOne = 2
 
 elif (state_time_t == 1):
-    state_time_tPlusOne = np.argmax(model.transmat_[1])
+
+    rand = random()
+    a10 = (model.transmat_[1][0])
+    a11 = (model.transmat_[1][1])
+    a12 = (model.transmat_[1][2])
+    
+    distrib0 = a10
+    distrib1 = a10 + a11
+    distrib2 = a10 + a11 + a12
+
+    #### goes to the next time (ie. t+1)    
+    if (rand <= distrib0):
+        state_time_tPlusOne = 0
+    
+    elif (rand <= distrib1):
+        state_time_tPlusOne = 1
+    
+    elif (rand <= distrib2):
+        state_time_tPlusOne = 2    
 
 elif (state_time_t == 2):
-    state_time_tPlusOne = np.argmax(model.transmat_[2])
+    
+    rand = random()
+    a20 = (model.transmat_[2][0])
+    a21 = (model.transmat_[2][1])
+    a22 = (model.transmat_[2][2])
+    
+    distrib0 = a20
+    distrib1 = a20 + a21
+    distrib2 = a20 + a21 + a22
+
+    #### goes to the next time (ie. t+1)    
+    if (rand <= distrib0):
+        state_time_tPlusOne = 0
+    
+    elif (rand <= distrib1):
+        state_time_tPlusOne = 1
+    
+    elif (rand <= distrib2):
+        state_time_tPlusOne = 2 
 
 
+predicted_states = []
+predicted_states.append(state_time_tPlusOne)
+
+###############################
+########## at time (t+1)
+if (predicted_states[-1] == 0):
+    predicted_states.append(0)
+    
+    rand = random()
+    distrib0 = a02/(a02 + a01)
+    distrib1 = a01/(a02 + a01)
+    total0 = distrib0
+    total1 = distrib0 + distrib1
+    
+    ### goes to the next time (ie. t+2)
+    if (rand <= total0):
+        predicted_states.append(2)
+        
+    elif (rand <= total1):
+        predicted_states.append(1)
+
+    
+    if (predicted_states[-1] == 2):
+        predicted_states.append(0)
+
+    elif (predicted_states[-1] == 1):
+        predicted_states.append(0)    
+
+
+if (predicted_states[-1] == 1):
+    rand = random()
+    
+    distrib0 = a10/(a10 + a12)
+    distrib1 = a12/(a10 + a12)
+    total0 = distrib0
+    total1 = distrib0 + distrib1
+    
+    ### goes to the next time (ie. t+2)
+    if (rand <= total0):
+        predicted_states.append(0)
+    
+    elif (rand <= total1):
+        predicted_states.append(2)
+    
+
+if (predicted_states[-1] == 2):
+    predicted_states.append(2)
+    
+    rand = random()
+    #distrib0 = a00
+    distrib1 = a20 + a21
+    distrib2 = a20 + a21 + a22
+    
+    ### goes to the next time (ie. t+2)
+    if (rand <= distrib1):
+        predicted_states.append(1)
+    
+    elif (rand <= distrib2):
+        predicted_states.append(0)
+
+    
+    if (predicted_states[-1] == 1):
+        predicted_states.append(2)
+
+    elif (predicted_states[-1] == 0):
+        predicted_states.append(2)        
+
+
+###############################################################################
+############### RETRIEVE THE LAST feature_vector (ie. the one at time t)
+last_feature_vector = feature_vector[-1]
+
+############### Time to compute the feature vector at time t
+E_k = maxima[-1]   
+E_k_1 = maxima[-2]
+E_k_2 = maxima[-3]
+E_k_3 = maxima[-4]
+E_k_4 = maxima[-5]
+
+####### Define 'check new f1'
+def check_new_f1(E_k, E_k_1, E_k_2, E_k_3, E_k_4):
+    if (E_k > E_k_1):
+        return 1
+    
+    elif (E_k < E_k_1):
+        return -1
+
+####### Define 'check new f2'
+def check_new_f2(E_k, E_k_1, E_k_2, E_k_3, E_k_4):
+    if (E_k_4 < E_k_2 < E_k and E_k_3 < E_k_1):
+        return 1
+    
+    elif (E_k_4 > E_k_2 > E_k and E_k_3 > E_k_1):
+        return -1
+    
+    else: return 0
+
+####### Define 'check new f3'
+def check_new_f3(E_k, E_k_1, E_k_2, E_k_3, E_k_4):
+    #VWAPkBidSpread = E_k - output_bid_zigzag[-1]
+    #VWAPkAskSpread = output_ask_zigzag[-1] - E_k
+    
+    #phi_new = VWAPkBidSpread - VWAPkAskSpread
+
+
+check_new_f1(E_k, E_k_1, E_k_2, E_k_3, E_k_4)
+check_new_f2(E_k, E_k_1, E_k_2, E_k_3, E_k_4)
+check_new_f3(E_k, E_k_1, E_k_2, E_k_3, E_k_4)
+
+
+
+
+###############################################################################
+###############################################################################
+####################### TO DO AFTER
 expected_returns = np.dot(model.transmat_, model.means_)
 returns_columnwise = list(zip(*expected_returns))
 returns = returns_columnwise[0] 
 
+returns_first_row = returns[0]      # returns if first hidden state
+returns_second_row = returns[1]     # returns if second hidden state
+returns_third_row = returns[2]      # returns if third hidden state
+
+""" Tricky part in which we have to find the most likely sequence
+    of hidden states based on various factors:
+        1) the current hidden state 
+        2) the transition matrix
+        3) the feature vector (ie. zigzags and order book info)
+            ---> find the most likely sequence from the past data ??? 
+"""
+
+#state = []
 predicted_prices = []
-lastN = 10
+lastN = 50
 
 current_price = tradeprice[-1]
 state = hidden_states[-lastN]
@@ -1606,10 +1796,10 @@ predicted_prices.extend((current_date, current_price + returns[state]))
 
 lastN_new = lastN-1
 
-for idx in range(lastN_new):
-    state = hidden_states[-lastN_new+idx+1]
+for ite in range(lastN_new):
+    state = hidden_states[-lastN_new+ite]
     current_price = predicted_prices[-1]
-    current_date = idx+1
+    current_date = ite+1
     predicted_prices.extend((current_date, current_price + returns[state]))
 
 print(predicted_prices)
