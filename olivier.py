@@ -1588,14 +1588,79 @@ BIC4 = -2*logprob + k4*logM
 ################################ PREDICTION ###################################
 from random import random
 
-state_time_t = hidden_states[-1]
+state_time_t = hidden_states[-1]    # Get the latest hidden state
+predicted_states = []
+
+###############################################################################
+###############################################################################
+############# RETRIEVE THE LAST feature_vector (ie. the one at time t) ########
+
+last_feature_vector = feature_vector[-1]    # Get the latest feature vector
 
 if (state_time_t == 0):
     
     rand = random()
     a00 = (model.transmat_[0][0])
     a01 = (model.transmat_[0][1])
-    a02 = (model.transmat_[0][2])
+    a02 = (model.transmat_[0][2])        
+
+    if (last_feature_vector == (1,1,1)):
+        a02 += 0.5
+
+    elif (last_feature_vector == (-1,1,-1)):
+        a02 += 0.5
+    
+    elif (last_feature_vector == (1,-1,1)):
+        a02 += 0.4
+
+    elif (last_feature_vector == (-1,-1,-1)):
+        a02 += 0.4
+    
+    elif (last_feature_vector == (1,1,0)):
+        a02 += 0.3
+
+    elif (last_feature_vector == (-1,1,0)):
+        a02 += 0.3
+
+    elif (last_feature_vector == (1,0,1)):
+        a02 += 0.2
+
+    elif (last_feature_vector == (-1,0,-1)):
+        a02 += 0.2
+
+    elif (last_feature_vector == (1,0,0)):
+        a01 += 0.1
+
+    elif (last_feature_vector == (-1,0,0)):
+        a01 += 0.1
+
+    elif (last_feature_vector == (1,0,-1)):
+        a00 += 0.2
+
+    elif (last_feature_vector == (-1,0,1)):
+        a00 += 0.2
+
+    elif (last_feature_vector == (1,-1,0)):
+        a00 += 0.3
+
+    elif (last_feature_vector == (-1,-1,0)):
+        a00 += 0.3
+
+    elif (last_feature_vector == (1,1,-1)):
+        a00 += 0.4
+
+    elif (last_feature_vector == (-1,1,1)):
+        a00 += 0.4
+
+    elif (last_feature_vector == (1,-1,-1)):
+        a00 += 0.5
+
+    elif (last_feature_vector == (-1,-1,1)):
+        a00 += 0.5
+    
+    a00 = a00/(a00 + a01 + a02)    
+    a01 = a01/(a00 + a01 + a02)    
+    a02 = a02/(a00 + a01 + a02) 
     
     distrib0 = a00
     distrib1 = a00 + a01
@@ -1617,6 +1682,64 @@ elif (state_time_t == 1):
     a10 = (model.transmat_[1][0])
     a11 = (model.transmat_[1][1])
     a12 = (model.transmat_[1][2])
+
+    if (last_feature_vector == (1,1,1)):
+        a12 += 0.5
+
+    elif (last_feature_vector == (-1,1,-1)):
+        a12 += 0.5
+    
+    elif (last_feature_vector == (1,-1,1)):
+        a12 += 0.4
+
+    elif (last_feature_vector == (-1,-1,-1)):
+        a12 += 0.4
+    
+    elif (last_feature_vector == (1,1,0)):
+        a12 += 0.3
+
+    elif (last_feature_vector == (-1,1,0)):
+        a12 += 0.3
+
+    elif (last_feature_vector == (1,0,1)):
+        a12 += 0.2
+
+    elif (last_feature_vector == (-1,0,-1)):
+        a12 += 0.2
+
+    elif (last_feature_vector == (1,0,0)):
+        a11 += 0.1
+
+    elif (last_feature_vector == (-1,0,0)):
+        a11 += 0.1
+
+    elif (last_feature_vector == (1,0,-1)):
+        a10 += 0.2
+
+    elif (last_feature_vector == (-1,0,1)):
+        a10 += 0.2
+
+    elif (last_feature_vector == (1,-1,0)):
+        a10 += 0.3
+
+    elif (last_feature_vector == (-1,-1,0)):
+        a10 += 0.3
+
+    elif (last_feature_vector == (1,1,-1)):
+        a10 += 0.4
+
+    elif (last_feature_vector == (-1,1,1)):
+        a10 += 0.4
+
+    elif (last_feature_vector == (1,-1,-1)):
+        a10 += 0.5
+
+    elif (last_feature_vector == (-1,-1,1)):
+        a10 += 0.5
+    
+    a10 = a10/(a10 + a11 + a12)    
+    a11 = a11/(a10 + a11 + a12)    
+    a12 = a12/(a10 + a11 + a12) 
     
     distrib0 = a10
     distrib1 = a10 + a11
@@ -1639,6 +1762,64 @@ elif (state_time_t == 2):
     a21 = (model.transmat_[2][1])
     a22 = (model.transmat_[2][2])
     
+    if (last_feature_vector == (1,1,1)):
+        a22 += 0.5
+
+    elif (last_feature_vector == (-1,1,-1)):
+        a22 += 0.5
+    
+    elif (last_feature_vector == (1,-1,1)):
+        a22 += 0.4
+
+    elif (last_feature_vector == (-1,-1,-1)):
+        a22 += 0.4
+    
+    elif (last_feature_vector == (1,1,0)):
+        a22 += 0.3
+
+    elif (last_feature_vector == (-1,1,0)):
+        a22 += 0.3
+
+    elif (last_feature_vector == (1,0,1)):
+        a22 += 0.2
+
+    elif (last_feature_vector == (-1,0,-1)):
+        a22 += 0.2
+
+    elif (last_feature_vector == (1,0,0)):
+        a21 += 0.1
+
+    elif (last_feature_vector == (-1,0,0)):
+        a21 += 0.1
+
+    elif (last_feature_vector == (1,0,-1)):
+        a20 += 0.2
+
+    elif (last_feature_vector == (-1,0,1)):
+        a20 += 0.2
+
+    elif (last_feature_vector == (1,-1,0)):
+        a20 += 0.3
+
+    elif (last_feature_vector == (-1,-1,0)):
+        a20 += 0.3
+
+    elif (last_feature_vector == (1,1,-1)):
+        a20 += 0.4
+
+    elif (last_feature_vector == (-1,1,1)):
+        a20 += 0.4
+
+    elif (last_feature_vector == (1,-1,-1)):
+        a20 += 0.5
+
+    elif (last_feature_vector == (-1,-1,1)):
+        a20 += 0.5
+    
+    a20 = a20/(a20 + a21 + a22)    
+    a21 = a21/(a20 + a21 + a22)    
+    a22 = a22/(a20 + a21 + a22)    
+    
     distrib0 = a20
     distrib1 = a20 + a21
     distrib2 = a20 + a21 + a22
@@ -1653,12 +1834,25 @@ elif (state_time_t == 2):
     elif (rand <= distrib2):
         state_time_tPlusOne = 2 
 
-
-predicted_states = []
 predicted_states.append(state_time_tPlusOne)
 
-###############################
-########## at time (t+1)
+
+###############################################################################
+###############################################################################
+############################# TIME (T+1) ######################################
+
+if (predicted_states[-1] == 0):
+    """ Need to think about this bruv
+        - append the new computed price at that time
+        - take that price into account to compute the new zigzag
+        - think about the hidden state at time t+1
+        - think about the probs of going to another state according to the 
+            COMPUTED FEATURE VECTOR and the transition matrix """
+
+
+
+
+
 if (predicted_states[-1] == 0):
     predicted_states.append(0)
     
@@ -1722,9 +1916,7 @@ if (predicted_states[-1] == 2):
         predicted_states.append(2)        
 
 
-###############################################################################
-############### RETRIEVE THE LAST feature_vector (ie. the one at time t)
-last_feature_vector = feature_vector[-1]
+
 
 ############### Time to compute the feature vector at time t
 E_k = maxima[-1]   
