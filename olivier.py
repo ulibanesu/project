@@ -295,6 +295,10 @@ def check_f1(X, changes, f1, listnew, boundaries):
     
     #duplicates = [k for k, g in itertools.groupby(X) if len(list(g)) > 1]
     #sign = [y - x for x,y in zip(duplicates, duplicates[1:])]
+    #f1 = []
+    #maxima = []
+    #changes = []
+    #boundaries = []
     
     n = len(X)
     preV = 0
@@ -486,7 +490,7 @@ with open(filename3) as f:
 for i in range(len(tradeprice)):
     orderbook_dates[i] = int(orderbook_dates[i])
 
-###################################### EXTRACT THE F1    
+###################################### RETRIEVE THE F1    
 f1 = []
 maxima = []
 changes = []
@@ -494,12 +498,12 @@ boundaries = []
 
 check_f1(tradeprice, changes, f1, maxima, boundaries)
 
-###################################### EXTRACT THE F2    
+###################################### RETRIEVE THE F2    
 f2 = []
 
 check_f2(tradeprice, f2, maxima)
 
-###################################### EXTRACT THE F3    
+###################################### RETRIEVE THE F3    
 f3 = []
 
 check_f3(f3, boundaries, tradeprice_dates, orderbook_dates)
@@ -740,7 +744,7 @@ hidden_states.extend(model.predict(X))
 
 hidden_states = np.array(hidden_states)
 
-print("done")
+print("The HMM has been processed")
 
 print("Has the EM Algorithm converged? ",model.monitor_.converged)
 
@@ -1394,19 +1398,34 @@ plt.grid(True)
 ########################## IN EACH OF THE HIDDEN STATES #######################
 
 #### CASE FOR U1
-U1_run_prob = U1_run/(U1_run + U1_neu + U1_rev)
-U1_neu_prob = U1_neu/(U1_run + U1_neu + U1_rev)
-U1_rev_prob = U1_rev/(U1_run + U1_neu + U1_rev)
+if (U1_run + U1_neu + U1_rev == 0):
+    U1_run_prob = 0
+    U1_neu_prob = 0
+    U1_rev_prob = 0
+else:
+    U1_run_prob = U1_run/(U1_run + U1_neu + U1_rev)
+    U1_neu_prob = U1_neu/(U1_run + U1_neu + U1_rev)
+    U1_rev_prob = U1_rev/(U1_run + U1_neu + U1_rev)
 
 #### CASE FOR U2
-U2_run_prob = U2_run/(U2_run + U2_neu + U2_rev)
-U2_neu_prob = U2_neu/(U2_run + U2_neu + U2_rev)
-U2_rev_prob = U2_rev/(U2_run + U2_neu + U2_rev)
+if (U2_run + U2_neu + U2_rev == 0):
+    U2_run_prob = 0
+    U2_neu_prob = 0
+    U2_rev_prob = 0
+else:
+    U2_run_prob = U2_run/(U2_run + U2_neu + U2_rev)
+    U2_neu_prob = U2_neu/(U2_run + U2_neu + U2_rev)
+    U2_rev_prob = U2_rev/(U2_run + U2_neu + U2_rev)
 
 #### CASE FOR U3
-U3_run_prob = U3_run/(U3_run + U3_neu + U3_rev)
-U3_neu_prob = U3_neu/(U3_run + U3_neu + U3_rev)
-U3_rev_prob = U3_rev/(U3_run + U3_neu + U3_rev)
+if (U3_run + U3_neu + U3_rev == 0):
+    U3_run_prob = 0
+    U3_neu_prob = 0
+    U3_rev_prob = 0
+else:
+    U3_run_prob = U3_run/(U3_run + U3_neu + U3_rev)
+    U3_neu_prob = U3_neu/(U3_run + U3_neu + U3_rev)
+    U3_rev_prob = U3_rev/(U3_run + U3_neu + U3_rev)
 
 #### CASE FOR U4
 U4_run_prob = U4_run/(U4_run + U4_neu + U4_rev)
@@ -1424,34 +1443,64 @@ U6_neu_prob = U6_neu/(U6_run + U6_neu + U6_rev)
 U6_rev_prob = U6_rev/(U6_run + U6_neu + U6_rev)
 
 #### CASE FOR U7
-U7_run_prob = U7_run/(U7_run + U7_neu + U7_rev)
-U7_neu_prob = U7_neu/(U7_run + U7_neu + U7_rev)
-U7_rev_prob = U7_rev/(U7_run + U7_neu + U7_rev)
+if (U7_run + U7_neu + U7_rev == 0):
+    U7_run_prob = 0
+    U7_neu_prob = 0
+    U7_rev_prob = 0
+else:
+    U7_run_prob = U7_run/(U7_run + U7_neu + U7_rev)
+    U7_neu_prob = U7_neu/(U7_run + U7_neu + U7_rev)
+    U7_rev_prob = U7_rev/(U7_run + U7_neu + U7_rev)
 
 #### CASE FOR U8
-U8_run_prob = U8_run/(U8_run + U8_neu + U8_rev)
-U8_neu_prob = U8_neu/(U8_run + U8_neu + U8_rev)
-U8_rev_prob = U8_rev/(U8_run + U8_neu + U8_rev)
+if (U8_run + U8_neu + U8_rev == 0):
+    U8_run_prob = 0
+    U8_neu_prob = 0
+    U8_rev_prob = 0
+else:
+    U8_run_prob = U8_run/(U8_run + U8_neu + U8_rev)
+    U8_neu_prob = U8_neu/(U8_run + U8_neu + U8_rev)
+    U8_rev_prob = U8_rev/(U8_run + U8_neu + U8_rev)
 
 #### CASE FOR U9
-U9_run_prob = U9_run/(U9_run + U9_neu + U9_rev)
-U9_neu_prob = U9_neu/(U9_run + U9_neu + U9_rev)
-U9_rev_prob = U9_rev/(U9_run + U9_neu + U9_rev)
+if (U9_run + U9_neu + U9_rev == 0):
+    U9_run_prob = 0
+    U9_neu_prob = 0
+    U9_rev_prob = 0
+else:
+    U9_run_prob = U9_run/(U9_run + U9_neu + U9_rev)
+    U9_neu_prob = U9_neu/(U9_run + U9_neu + U9_rev)
+    U9_rev_prob = U9_rev/(U9_run + U9_neu + U9_rev)
 
 #### CASE FOR D1
-D1_run_prob = D1_run/(D1_run + D1_neu + D1_rev)
-D1_neu_prob = D1_neu/(D1_run + D1_neu + D1_rev)
-D1_rev_prob = D1_rev/(D1_run + D1_neu + D1_rev)
+if (D1_run + D1_neu + D1_rev == 0):
+    D1_run_prob = 0
+    D1_neu_prob = 0
+    D1_rev_prob = 0
+else:
+    D1_run_prob = D1_run/(D1_run + D1_neu + D1_rev)
+    D1_neu_prob = D1_neu/(D1_run + D1_neu + D1_rev)
+    D1_rev_prob = D1_rev/(D1_run + D1_neu + D1_rev)
 
 #### CASE FOR D2
-D2_run_prob = D2_run/(D2_run + D2_neu + D2_rev)
-D2_neu_prob = D2_neu/(D2_run + D2_neu + D2_rev)
-D2_rev_prob = D2_rev/(D2_run + D2_neu + D2_rev)
+if (D2_run + D2_neu + D2_rev == 0):
+    D2_run_prob = 0
+    D2_neu_prob = 0
+    D2_rev_prob = 0
+else:
+    D2_run_prob = D2_run/(D2_run + D2_neu + D2_rev)
+    D2_neu_prob = D2_neu/(D2_run + D2_neu + D2_rev)
+    D2_rev_prob = D2_rev/(D2_run + D2_neu + D2_rev)
 
 #### CASE FOR D3
-D3_run_prob = D3_run/(D3_run + D3_neu + D3_rev)
-D3_neu_prob = D3_neu/(D3_run + D3_neu + D3_rev)
-D3_rev_prob = D3_rev/(D3_run + D3_neu + D3_rev)
+if (D3_run + D3_neu + D3_rev == 0):
+    D3_run_prob = 0
+    D3_neu_prob = 0
+    D3_rev_prob = 0
+else:
+    D3_run_prob = D3_run/(D3_run + D3_neu + D3_rev)
+    D3_neu_prob = D3_neu/(D3_run + D3_neu + D3_rev)
+    D3_rev_prob = D3_rev/(D3_run + D3_neu + D3_rev)
 
 #### CASE FOR D4
 D4_run_prob = D4_run/(D4_run + D4_neu + D4_rev)
@@ -1469,19 +1518,34 @@ D6_neu_prob = D6_neu/(D6_run + D6_neu + D6_rev)
 D6_rev_prob = D6_rev/(D6_run + D6_neu + D6_rev)
 
 #### CASE FOR D7
-D7_run_prob = D7_run/(D7_run + D7_neu + D7_rev)
-D7_neu_prob = D7_neu/(D7_run + D7_neu + D7_rev)
-D7_rev_prob = D7_rev/(D7_run + D7_neu + D7_rev)
+if (D7_run + D7_neu + D7_rev == 0):
+    D7_run_prob = 0
+    D7_neu_prob = 0
+    D7_rev_prob = 0
+else:
+    D7_run_prob = D7_run/(D7_run + D7_neu + D7_rev)
+    D7_neu_prob = D7_neu/(D7_run + D7_neu + D7_rev)
+    D7_rev_prob = D7_rev/(D7_run + D7_neu + D7_rev)
 
 #### CASE FOR D8
-D8_run_prob = D8_run/(D8_run + D8_neu + D8_rev)
-D8_neu_prob = D8_neu/(D8_run + D8_neu + D8_rev)
-D8_rev_prob = D8_rev/(D8_run + D8_neu + D8_rev)
+if (D8_run + D8_neu + D8_rev == 0):
+    D8_run_prob = 0
+    D8_neu_prob = 0
+    D8_rev_prob = 0
+else:
+    D8_run_prob = D8_run/(D8_run + D8_neu + D8_rev)
+    D8_neu_prob = D8_neu/(D8_run + D8_neu + D8_rev)
+    D8_rev_prob = D8_rev/(D8_run + D8_neu + D8_rev)
 
 #### CASE FOR D9
-D9_run_prob = D9_run/(D9_run + D9_neu + D9_rev)
-D9_neu_prob = D9_neu/(D9_run + D9_neu + D9_rev)
-D9_rev_prob = D9_rev/(D9_run + D9_neu + D9_rev)
+if (D9_run + D9_neu + D9_rev == 0):
+    D9_run_prob = 0
+    D9_neu_prob = 0
+    D9_rev_prob = 0
+else:
+    D9_run_prob = D9_run/(D9_run + D9_neu + D9_rev)
+    D9_neu_prob = D9_neu/(D9_run + D9_neu + D9_rev)
+    D9_rev_prob = D9_rev/(D9_run + D9_neu + D9_rev)
 
 
 ###############################################################################
@@ -1583,6 +1647,7 @@ BIC3 = -2*logprob + k3*logM
 BIC4 = -2*logprob + k4*logM
 
 
+
 ###############################################################################
 ###############################################################################
 ################################ PREDICTION ###################################
@@ -1658,9 +1723,10 @@ if (state_time_t == 0):
     elif (last_feature_vector == (-1,-1,1)):
         a00 += 0.5
     
-    a00 = a00/(a00 + a01 + a02)    
-    a01 = a01/(a00 + a01 + a02)    
-    a02 = a02/(a00 + a01 + a02) 
+    denom = (a00 + a01 + a02) 
+    a00 = a00/denom    
+    a01 = a01/denom    
+    a02 = a02/denom 
     
     distrib0 = a00
     distrib1 = a00 + a01
@@ -1737,9 +1803,10 @@ elif (state_time_t == 1):
     elif (last_feature_vector == (-1,-1,1)):
         a10 += 0.5
     
-    a10 = a10/(a10 + a11 + a12)    
-    a11 = a11/(a10 + a11 + a12)    
-    a12 = a12/(a10 + a11 + a12) 
+    denom = (a10 + a11 + a12) 
+    a10 = a10/denom    
+    a11 = a11/denom
+    a12 = a12/denom 
     
     distrib0 = a10
     distrib1 = a10 + a11
@@ -1816,9 +1883,10 @@ elif (state_time_t == 2):
     elif (last_feature_vector == (-1,-1,1)):
         a20 += 0.5
     
-    a20 = a20/(a20 + a21 + a22)    
-    a21 = a21/(a20 + a21 + a22)    
-    a22 = a22/(a20 + a21 + a22)    
+    denom = (a20 + a21 + a22)
+    a20 = a20/denom 
+    a21 = a21/denom    
+    a22 = a22/denom   
     
     distrib0 = a20
     distrib1 = a20 + a21
@@ -1840,19 +1908,364 @@ predicted_states.append(state_time_tPlusOne)
 ###############################################################################
 ###############################################################################
 ############################# TIME (T+1) ######################################
+return_state0 = model.means_[0]
+return_state1 = model.means_[1]
+return_state2 = model.means_[2]
+
+current_price = tradeprice[-1]
 
 if (predicted_states[-1] == 0):
-    """ Need to think about this bruv
+
+    """ 
+    Need to think about this bruv
         - append the new computed price at that time
         - take that price into account to compute the new zigzag
         - think about the hidden state at time t+1
         - think about the probs of going to another state according to the 
-            COMPUTED FEATURE VECTOR and the transition matrix """
+            COMPUTED FEATURE VECTOR and the transition matrix 
+    """
+
+    tradeprice.append(current_price+return_state0)
+
+    current_price = tradeprice[-1]
+    
+    ###################################### RETRIEVE THE F1    
+    f1 = []
+    maxima = []
+    changes = []
+    boundaries = []
+
+    check_f1(tradeprice, changes, f1, maxima, boundaries)
+    
+    ###################################### RETRIEVE THE F2    
+    f2 = []
+    
+    check_f2(tradeprice, f2, maxima)
+    
+    ###################################### RETRIEVE THE F3    
+    f3 = []
+    
+    check_f3(f3, boundaries, tradeprice_dates, orderbook_dates)
+
+    first = f1[-1]
+    second = f2[-1]
+    third = f3[-1]
+    each_feature = (first, second, third)
+    feature_vector.append(each_feature)
+    
+    last_feature_vector = feature_vector[-1]     # RETRIEVE THE LAST FEATURE VECTOR
+    
+    
+    rand = random()
+    a00 = (model.transmat_[0][0])
+    a01 = (model.transmat_[0][1])
+    a02 = (model.transmat_[0][2])        
+
+    if (last_feature_vector == (1,1,1)):
+        a02 += 0.5
+
+    elif (last_feature_vector == (-1,1,-1)):
+        a02 += 0.5
+    
+    elif (last_feature_vector == (1,-1,1)):
+        a02 += 0.4
+
+    elif (last_feature_vector == (-1,-1,-1)):
+        a02 += 0.4
+    
+    elif (last_feature_vector == (1,1,0)):
+        a02 += 0.3
+
+    elif (last_feature_vector == (-1,1,0)):
+        a02 += 0.3
+
+    elif (last_feature_vector == (1,0,1)):
+        a02 += 0.2
+
+    elif (last_feature_vector == (-1,0,-1)):
+        a02 += 0.2
+
+    elif (last_feature_vector == (1,0,0)):
+        a01 += 0
+
+    elif (last_feature_vector == (-1,0,0)):
+        a01 += 0
+
+    elif (last_feature_vector == (1,0,-1)):
+        a00 += 0.2
+
+    elif (last_feature_vector == (-1,0,1)):
+        a00 += 0.2
+
+    elif (last_feature_vector == (1,-1,0)):
+        a00 += 0.3
+
+    elif (last_feature_vector == (-1,-1,0)):
+        a00 += 0.3
+
+    elif (last_feature_vector == (1,1,-1)):
+        a00 += 0.4
+
+    elif (last_feature_vector == (-1,1,1)):
+        a00 += 0.4
+
+    elif (last_feature_vector == (1,-1,-1)):
+        a00 += 0.5
+
+    elif (last_feature_vector == (-1,-1,1)):
+        a00 += 0.5
+
+
+    denom = (a00 + a01 + a02)
+    a00 = a00/denom 
+    a01 = a01/denom    
+    a02 = a02/denom 
+    
+    distrib0 = a02/(a02 + a00)
+    distrib1 = a00/(a02 + a00)
+    total0 = distrib0
+    total1 = distrib0 + distrib1
+    
+    #### goes to the next time (ie. t+2)
+    if (rand <= total0):
+        predicted_states.append(2)
+    
+    elif (rand <= total1):
+        predicted_states.append(0)
+
+
+
+elif (predicted_states[-1] == 1):
+
+    tradeprice.append(current_price+return_state1)
+
+    current_price = tradeprice[-1]
+    
+    ###################################### RETRIEVE THE F1    
+    f1 = []
+    maxima = []
+    changes = []
+    boundaries = []
+
+    check_f1(tradeprice, changes, f1, maxima, boundaries)
+    
+    ###################################### RETRIEVE THE F2    
+    f2 = []
+    
+    check_f2(tradeprice, f2, maxima)
+    
+    ###################################### RETRIEVE THE F3    
+    f3 = []
+    
+    check_f3(f3, boundaries, tradeprice_dates, orderbook_dates)
+
+    first = f1[-1]
+    second = f2[-1]
+    third = f3[-1]
+    each_feature = (first, second, third)
+    feature_vector.append(each_feature)
+    
+    last_feature_vector = feature_vector[-1]     # RETRIEVE THE LAST FEATURE VECTOR
+    
+    
+    rand = random()
+    a10 = (model.transmat_[1][0])
+    a11 = (model.transmat_[1][1])
+    a12 = (model.transmat_[1][2])        
+
+    if (last_feature_vector == (1,1,1)):
+        a12 += 0.5
+
+    elif (last_feature_vector == (-1,1,-1)):
+        a12 += 0.5
+    
+    elif (last_feature_vector == (1,-1,1)):
+        a12 += 0.4
+
+    elif (last_feature_vector == (-1,-1,-1)):
+        a12 += 0.4
+    
+    elif (last_feature_vector == (1,1,0)):
+        a12 += 0.3
+
+    elif (last_feature_vector == (-1,1,0)):
+        a12 += 0.3
+
+    elif (last_feature_vector == (1,0,1)):
+        a12 += 0.2
+
+    elif (last_feature_vector == (-1,0,-1)):
+        a12 += 0.2
+
+    elif (last_feature_vector == (1,0,0)):
+        a11 += 0
+
+    elif (last_feature_vector == (-1,0,0)):
+        a11 += 0
+
+    elif (last_feature_vector == (1,0,-1)):
+        a10 += 0.2
+
+    elif (last_feature_vector == (-1,0,1)):
+        a10 += 0.2
+
+    elif (last_feature_vector == (1,-1,0)):
+        a10 += 0.3
+
+    elif (last_feature_vector == (-1,-1,0)):
+        a10 += 0.3
+
+    elif (last_feature_vector == (1,1,-1)):
+        a10 += 0.4
+
+    elif (last_feature_vector == (-1,1,1)):
+        a10 += 0.4
+
+    elif (last_feature_vector == (1,-1,-1)):
+        a10 += 0.5
+
+    elif (last_feature_vector == (-1,-1,1)):
+        a10 += 0.5
+
+
+    denom = (a10 + a11 + a12)
+    a10 = a10/denom 
+    a11 = a11/denom    
+    a12 = a12/denom 
+    
+    distrib0 = a12/(a12 + a10)
+    distrib1 = a10/(a12 + a10)
+    total0 = distrib0
+    total1 = distrib0 + distrib1
+    
+    #### goes to the next time (ie. t+2)
+    if (rand <= total0):
+        predicted_states.append(2)
+    
+    elif (rand <= total1):
+        predicted_states.append(0)
+
+elif (predicted_states[-1] == 2):
+
+    tradeprice.append(current_price+return_state2)
+
+    current_price = tradeprice[-1]
+    
+    ###################################### RETRIEVE THE F1    
+    f1 = []
+    maxima = []
+    changes = []
+    boundaries = []
+
+    check_f1(tradeprice, changes, f1, maxima, boundaries)
+    
+    ###################################### RETRIEVE THE F2    
+    f2 = []
+    
+    check_f2(tradeprice, f2, maxima)
+    
+    ###################################### RETRIEVE THE F3    
+    f3 = []
+    
+    check_f3(f3, boundaries, tradeprice_dates, orderbook_dates)
+
+    first = f1[-1]
+    second = f2[-1]
+    third = f3[-1]
+    each_feature = (first, second, third)
+    feature_vector.append(each_feature)
+    
+    last_feature_vector = feature_vector[-1]     # RETRIEVE THE LAST FEATURE VECTOR
+    
+    
+    rand = random()
+    a20 = (model.transmat_[2][0])
+    a21 = (model.transmat_[2][1])
+    a22 = (model.transmat_[2][2])        
+
+    if (last_feature_vector == (1,1,1)):
+        a22 += 0.5
+
+    elif (last_feature_vector == (-1,1,-1)):
+        a22 += 0.5
+    
+    elif (last_feature_vector == (1,-1,1)):
+        a22 += 0.4
+
+    elif (last_feature_vector == (-1,-1,-1)):
+        a22 += 0.4
+    
+    elif (last_feature_vector == (1,1,0)):
+        a22 += 0.3
+
+    elif (last_feature_vector == (-1,1,0)):
+        a22 += 0.3
+
+    elif (last_feature_vector == (1,0,1)):
+        a22 += 0.2
+
+    elif (last_feature_vector == (-1,0,-1)):
+        a22 += 0.2
+
+    elif (last_feature_vector == (1,0,0)):
+        a21 += 0
+
+    elif (last_feature_vector == (-1,0,0)):
+        a21 += 0
+
+    elif (last_feature_vector == (1,0,-1)):
+        a20 += 0.2
+
+    elif (last_feature_vector == (-1,0,1)):
+        a20 += 0.2
+
+    elif (last_feature_vector == (1,-1,0)):
+        a20 += 0.3
+
+    elif (last_feature_vector == (-1,-1,0)):
+        a20 += 0.3
+
+    elif (last_feature_vector == (1,1,-1)):
+        a20 += 0.4
+
+    elif (last_feature_vector == (-1,1,1)):
+        a20 += 0.4
+
+    elif (last_feature_vector == (1,-1,-1)):
+        a20 += 0.5
+
+    elif (last_feature_vector == (-1,-1,1)):
+        a20 += 0.5
+
+
+    denom = (a20 + a21 + a22)
+    a20 = a20/denom 
+    a21 = a21/denom    
+    a22 = a22/denom 
+    
+    distrib0 = a22/(a22 + a20)
+    distrib1 = a20/(a22 + a20)
+    total0 = distrib0
+    total1 = distrib0 + distrib1
+    
+    #### goes to the next time (ie. t+2)
+    if (rand <= total0):
+        predicted_states.append(2)
+    
+    elif (rand <= total1):
+        predicted_states.append(0)
 
 
 
 
 
+
+
+
+
+
+
+"""
 if (predicted_states[-1] == 0):
     predicted_states.append(0)
     
@@ -1968,7 +2381,7 @@ returns = returns_columnwise[0]
 returns_first_row = returns[0]      # returns if first hidden state
 returns_second_row = returns[1]     # returns if second hidden state
 returns_third_row = returns[2]      # returns if third hidden state
-
+"""
 """ Tricky part in which we have to find the most likely sequence
     of hidden states based on various factors:
         1) the current hidden state 
@@ -1976,7 +2389,7 @@ returns_third_row = returns[2]      # returns if third hidden state
         3) the feature vector (ie. zigzags and order book info)
             ---> find the most likely sequence from the past data ??? 
 """
-
+"""
 #state = []
 predicted_prices = []
 lastN = 50
@@ -1995,3 +2408,4 @@ for ite in range(lastN_new):
     predicted_prices.extend((current_date, current_price + returns[state]))
 
 print(predicted_prices)
+"""
