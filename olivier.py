@@ -1734,13 +1734,13 @@ if (state_time_t == 0):
     
     #### goes to the next time (ie. t+1)
     if (rand <= distrib0):
-        state_time_tPlusOne = 0
+        state_time_tPlusOne = 10
     
     elif (rand <= distrib1):
-        state_time_tPlusOne = 1
+        state_time_tPlusOne = 11
     
     elif (rand <= distrib2):
-        state_time_tPlusOne = 2
+        state_time_tPlusOne = 12
 
 elif (state_time_t == 1):
 
@@ -1814,13 +1814,13 @@ elif (state_time_t == 1):
 
     #### goes to the next time (ie. t+1)    
     if (rand <= distrib0):
-        state_time_tPlusOne = 0
+        state_time_tPlusOne = 10
     
     elif (rand <= distrib1):
-        state_time_tPlusOne = 1
+        state_time_tPlusOne = 11
     
     elif (rand <= distrib2):
-        state_time_tPlusOne = 2    
+        state_time_tPlusOne = 12    
 
 elif (state_time_t == 2):
     
@@ -1894,13 +1894,13 @@ elif (state_time_t == 2):
 
     #### goes to the next time (ie. t+1)    
     if (rand <= distrib0):
-        state_time_tPlusOne = 0
+        state_time_tPlusOne = 10
     
     elif (rand <= distrib1):
-        state_time_tPlusOne = 1
+        state_time_tPlusOne = 11
     
     elif (rand <= distrib2):
-        state_time_tPlusOne = 2 
+        state_time_tPlusOne = 12 
 
 predicted_states.append(state_time_tPlusOne)
 
@@ -1914,7 +1914,7 @@ return_state2 = model.means_[2]
 
 current_price = tradeprice[-1]
 
-if (predicted_states[-1] == 0):
+if (predicted_states[-1] == 10):
 
     """ 
     Need to think about this bruv
@@ -2028,14 +2028,14 @@ if (predicted_states[-1] == 0):
     
     #### goes to the next time (ie. t+2)
     if (rand <= total0):
-        predicted_states.append(2)
+        predicted_states.append(12)
     
     elif (rand <= total1):
-        predicted_states.append(0)
+        predicted_states.append(2020)
 
 
 
-elif (predicted_states[-1] == 1):
+elif (predicted_states[-1] == 11):
 
     tradeprice.append(current_price+return_state1)
 
@@ -2140,12 +2140,13 @@ elif (predicted_states[-1] == 1):
     
     #### goes to the next time (ie. t+2)
     if (rand <= total0):
-        predicted_states.append(2)
+        predicted_states.append(12)
     
     elif (rand <= total1):
-        predicted_states.append(0)
+        predicted_states.append(10)
 
-elif (predicted_states[-1] == 2):
+
+elif (predicted_states[-1] == 12):
 
     tradeprice.append(current_price+return_state2)
 
@@ -2250,17 +2251,238 @@ elif (predicted_states[-1] == 2):
     
     #### goes to the next time (ie. t+2)
     if (rand <= total0):
-        predicted_states.append(2)
+        predicted_states.append(222)
     
     elif (rand <= total1):
-        predicted_states.append(0)
+        predicted_states.append(10)
 
 
+###############################################################################
+###############################################################################
+############################# TIME (T+2) ######################################
+current_state = predicted_states[-1]
+
+if (current_state == 12):
+    tradeprice.append(current_price+return_state2)
+
+    current_price = tradeprice[-1]
+    
+    ###################################### RETRIEVE THE F1    
+    f1 = []
+    maxima = []
+    changes = []
+    boundaries = []
+
+    check_f1(tradeprice, changes, f1, maxima, boundaries)
+    
+    ###################################### RETRIEVE THE F2    
+    f2 = []
+    
+    check_f2(tradeprice, f2, maxima)
+    
+    ###################################### RETRIEVE THE F3    
+    f3 = []
+    
+    check_f3(f3, boundaries, tradeprice_dates, orderbook_dates)
+
+    first = f1[-1]
+    second = f2[-1]
+    third = f3[-1]
+    each_feature = (first, second, third)
+    feature_vector.append(each_feature)
+    
+    last_feature_vector = feature_vector[-1]     # RETRIEVE THE LAST FEATURE VECTOR
+    
+    
+    rand = random()
+    a20 = (model.transmat_[2][0])
+    a21 = (model.transmat_[2][1])
+    a22 = (model.transmat_[2][2])        
+
+    if (last_feature_vector == (1,1,1)):
+        a22 += 0.5
+
+    elif (last_feature_vector == (-1,1,-1)):
+        a22 += 0.5
+    
+    elif (last_feature_vector == (1,-1,1)):
+        a22 += 0.4
+
+    elif (last_feature_vector == (-1,-1,-1)):
+        a22 += 0.4
+    
+    elif (last_feature_vector == (1,1,0)):
+        a22 += 0.3
+
+    elif (last_feature_vector == (-1,1,0)):
+        a22 += 0.3
+
+    elif (last_feature_vector == (1,0,1)):
+        a22 += 0.2
+
+    elif (last_feature_vector == (-1,0,-1)):
+        a22 += 0.2
+
+    elif (last_feature_vector == (1,0,0)):
+        a21 += 0
+
+    elif (last_feature_vector == (-1,0,0)):
+        a21 += 0
+
+    elif (last_feature_vector == (1,0,-1)):
+        a20 += 0.2
+
+    elif (last_feature_vector == (-1,0,1)):
+        a20 += 0.2
+
+    elif (last_feature_vector == (1,-1,0)):
+        a20 += 0.3
+
+    elif (last_feature_vector == (-1,-1,0)):
+        a20 += 0.3
+
+    elif (last_feature_vector == (1,1,-1)):
+        a20 += 0.4
+
+    elif (last_feature_vector == (-1,1,1)):
+        a20 += 0.4
+
+    elif (last_feature_vector == (1,-1,-1)):
+        a20 += 0.5
+
+    elif (last_feature_vector == (-1,-1,1)):
+        a20 += 0.5
 
 
+    denom = (a20 + a21 + a22)
+    a20 = a20/denom 
+    a21 = a21/denom    
+    a22 = a22/denom 
+    
+    distrib0 = a22/(a22 + a20)
+    distrib1 = a20/(a22 + a20)
+    total0 = distrib0
+    total1 = distrib0 + distrib1
+    
+    #### goes to the next time (ie. t+2)
+    if (rand <= total0):
+        predicted_states.append(222)
+    
+    elif (rand <= total1):
+        predicted_states.append(10)
 
 
+elif (current_state == 10):    
+    tradeprice.append(current_price+return_state0)
 
+    current_price = tradeprice[-1]
+    
+    ###################################### RETRIEVE THE F1    
+    f1 = []
+    maxima = []
+    changes = []
+    boundaries = []
+
+    check_f1(tradeprice, changes, f1, maxima, boundaries)
+    
+    ###################################### RETRIEVE THE F2    
+    f2 = []
+    
+    check_f2(tradeprice, f2, maxima)
+    
+    ###################################### RETRIEVE THE F3    
+    f3 = []
+    
+    check_f3(f3, boundaries, tradeprice_dates, orderbook_dates)
+
+    first = f1[-1]
+    second = f2[-1]
+    third = f3[-1]
+    each_feature = (first, second, third)
+    feature_vector.append(each_feature)
+    
+    last_feature_vector = feature_vector[-1]     # RETRIEVE THE LAST FEATURE VECTOR
+    
+    
+    rand = random()
+    a00 = (model.transmat_[0][0])
+    a01 = (model.transmat_[0][1])
+    a02 = (model.transmat_[0][2])        
+
+    if (last_feature_vector == (1,1,1)):
+        a02 += 0.5
+
+    elif (last_feature_vector == (-1,1,-1)):
+        a02 += 0.5
+    
+    elif (last_feature_vector == (1,-1,1)):
+        a02 += 0.4
+
+    elif (last_feature_vector == (-1,-1,-1)):
+        a02 += 0.4
+    
+    elif (last_feature_vector == (1,1,0)):
+        a02 += 0.3
+
+    elif (last_feature_vector == (-1,1,0)):
+        a02 += 0.3
+
+    elif (last_feature_vector == (1,0,1)):
+        a02 += 0.2
+
+    elif (last_feature_vector == (-1,0,-1)):
+        a02 += 0.2
+
+    elif (last_feature_vector == (1,0,0)):
+        a01 += 0
+
+    elif (last_feature_vector == (-1,0,0)):
+        a01 += 0
+
+    elif (last_feature_vector == (1,0,-1)):
+        a00 += 0.2
+
+    elif (last_feature_vector == (-1,0,1)):
+        a00 += 0.2
+
+    elif (last_feature_vector == (1,-1,0)):
+        a00 += 0.3
+
+    elif (last_feature_vector == (-1,-1,0)):
+        a00 += 0.3
+
+    elif (last_feature_vector == (1,1,-1)):
+        a00 += 0.4
+
+    elif (last_feature_vector == (-1,1,1)):
+        a00 += 0.4
+
+    elif (last_feature_vector == (1,-1,-1)):
+        a00 += 0.5
+
+    elif (last_feature_vector == (-1,-1,1)):
+        a00 += 0.5
+
+
+    denom = (a00 + a01 + a02)
+    a00 = a00/denom 
+    a01 = a01/denom    
+    a02 = a02/denom 
+    
+    distrib0 = a02/(a02 + a00)
+    distrib1 = a00/(a02 + a00)
+    total0 = distrib0
+    total1 = distrib0 + distrib1
+    
+    #### goes to the next time (ie. t+2)
+    if (rand <= total0):
+        predicted_states.append(12)
+    
+    elif (rand <= total1):
+        predicted_states.append(2020)
+
+
+elif (current_state == 222):    
 
 
 
